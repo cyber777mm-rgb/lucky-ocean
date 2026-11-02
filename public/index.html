@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#061b35">
+  <title>LUCKY OCEAN</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: #f4f8ff;
+      font-family: Arial, sans-serif;
+      background:
+        radial-gradient(circle at 50% 5%, #164b79 0, transparent 38%),
+        linear-gradient(180deg, #061b35, #09152d 65%, #100f2d);
+    }
+    .app { max-width: 480px; margin: auto; padding: 22px 17px 40px; }
+    header { display:flex; justify-content:space-between; align-items:center; }
+    .brand { font-size: 23px; font-weight: 900; letter-spacing: 2px; }
+    .brand span { color:#ffd77a; }
+    .tag { color:#9fc8e9; font-size:10px; letter-spacing:3px; margin-top:5px; }
+    .badge {
+      border:1px solid #d8b66c66; color:#ffdc91;
+      border-radius:20px; padding:8px 11px; font-size:11px;
+    }
+    .welcome { text-align:center; margin:28px 0 18px; }
+    .welcome h1 { font-size:25px; margin:0 0 8px; }
+    .welcome p { color:#a9c5df; font-size:13px; line-height:1.6; }
+    .tank {
+      position:relative; height:290px; overflow:hidden;
+      border:3px solid #b7eaff88; border-radius:25px;
+      background:
+        radial-gradient(ellipse at 50% 100%, #147f9c88, transparent 60%),
+        linear-gradient(180deg,#55c9ed33,#08749c66 65%,#06385c);
+      box-shadow: inset 0 0 35px #65d9ff44, 0 15px 45px #0008;
+    }
+    .tank:before {
+      content:""; position:absolute; inset:0;
+      background:repeating-linear-gradient(110deg,transparent 0 35px,#b9efff09 36px 38px);
+      pointer-events:none;
+    }
+    .waterline {
+      position:absolute; top:12px; left:0; right:0; height:2px;
+      background:#c9f5ff88; box-shadow:0 0 15px #9beaff;
+    }
+    .plant {
+      position:absolute; bottom:-12px; width:12px; height:100px;
+      border-radius:100% 0; background:#5cbb9a;
+      transform:rotate(-15deg); opacity:.8;
+    }
+    .plant.p1 {left:8%;height:90px}
+    .plant.p2 {left:15%;height:125px;transform:rotate(18deg);background:#9872d8}
+    .plant.p3 {right:12%;height:130px;transform:rotate(-20deg);background:#65c4a5}
+    .plant.p4 {right:5%;height:85px;transform:rotate(15deg);background:#a18be0}
+    .sand {
+      position:absolute; bottom:0; height:28px; width:100%;
+      background:linear-gradient(#d6c58c66,#b99c6388);
+      border-radius:50% 50% 0 0;
+    }
+    .fish {
+      position:absolute; width:125px; height:65px;
+      border-radius:55% 48% 48% 55%;
+      top:100px; filter:drop-shadow(0 5px 9px #001c36aa);
+      animation:swim 5s ease-in-out infinite alternate;
+    }
+    .fish:before {
+      content:""; position:absolute; right:-27px; top:13px;
+      border-top:20px solid transparent;
+      border-bottom:20px solid transparent;
+      border-left:32px solid var(--tail);
+    }
+    .fish:after {
+      content:""; position:absolute; left:22px; top:7px;
+      width:78px; height:50px; border-radius:50%;
+      background:repeating-linear-gradient(90deg,transparent 0 10px,#fff5 11px 12px);
+    }
+    .male {
+      --tail:#e3a63b;
+      left:18%; top:85px;
+      background:radial-gradient(ellipse at 35% 30%,#fff0b1,#e9ae43 48%,#a65b24);
+    }
+    .female {
+      --tail:#85e7f6;
+      right:15%; top:165px;
+      background:radial-gradient(ellipse at 35% 30%,#fff,#b8f1f8 48%,#559bc6);
+      animation-delay:-2s;
+    }
+    .eye {
+      position:absolute; z-index:2; right:15px; top:19px;
+      width:8px; height:8px; background:#fff;
+      border-radius:50%; box-shadow:inset -2px -1px #142b4a;
+    }
+    .label {
+      position:absolute; top:58px; font-size:10px;
+      color:#e5f8ff; letter-spacing:2px;
+    }
+    .label.m {left:22%} .label.f {right:17%;top:140px}
+    @keyframes swim {
+      from { transform:translateX(-8px) rotate(-3deg); }
+      to { transform:translateX(13px) rotate(3deg); }
+    }
+    .tank-caption { text-align:center; color:#a9d7ed; font-size:11px; margin:12px 0 24px; }
+    .balance {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:16px; border:1px solid #6caedb55;
+      background:#112c4b99; border-radius:16px; margin-bottom:23px;
+    }
+    .balance small { color:#9dbbd6; display:block; margin-bottom:5px; }
+    .balance strong { color:#ffda88; font-size:22px; }
+    .section-title { font-size:17px; margin:0 0 7px; }
+    .hint { color:#9cb5ce; font-size:12px; line-height:1.6; margin:0 0 14px; }
+    .packages { display:grid; grid-template-columns:repeat(3,1fr); gap:9px; }
+    .package {
+      border:1px solid #6596bf66; background:#102846;
+      color:white; border-radius:14px; padding:15px 5px;
+      cursor:pointer; text-align:center;
+    }
+    .package.active {
+      border:2px solid #f3c76d;
+      background:linear-gradient(160deg,#57452c,#182c49);
+      box-shadow:0 0 18px #e5b65c33;
+    }
+    .package b { display:block; color:#ffdc91; font-size:15px; }
+    .package small { display:block; color:#a9c6df; font-size:10px; margin-top:7px; }
+    .primary {
+      width:100%; border:0; border-radius:14px; padding:16px;
+      margin-top:15px; color:#14213a; font-weight:900;
+      letter-spacing:1px; font-size:13px;
+      background:linear-gradient(100deg,#f7d98f,#d9a94c);
+      cursor:pointer;
+    }
+    .feed {
+      background:linear-gradient(100deg,#58d4e9,#a7d9f7);
+      margin-top:10px;
+    }
+    .wish {
+      text-align:center; margin-top:22px; padding:17px;
+      border:1px solid #9879d566; border-radius:16px;
+      background:#39245b55; color:#e7d8ff;
+      font-size:13px; line-height:1.7;
+    }
+    .wish strong { color:#ffdb92; display:block; margin-bottom:5px; }
+    footer { text-align:center; color:#66839e; font-size:10px; margin-top:25px; letter-spacing:2px; }
+    @media(max-width:360px) {
+      .fish { transform:scale(.85); }
+      .male {left:10%}.female {right:8%}
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header>
+      <div>
+        <div class="brand">LUCKY <span>OCEAN</span></div>
+        <div class="tag">A LITTLE WORLD OF MAGIC</div>
+      </div>
+      <div class="badge">✦ AQUARIUM</div>
+    </header>
+
+    <section class="welcome">
+      <h1>Welcome to your ocean 💙</h1>
+      <p>A peaceful little world, two magical fish,<br>and a beautiful wish waiting for you.</p>
+    </section>
+
+    <section class="tank" aria-label="Fantasy aquarium">
+      <div class="waterline"></div>
+      <div class="label m">GOLDEN BOY</div>
+      <div class="label f">PEARL GIRL</div>
+      <div class="fish male"><span class="eye"></span></div>
+      <div class="fish female"><span class="eye"></span></div>
+      <div class="plant p1"></div><div class="plant p2"></div>
+      <div class="plant p3"></div><div class="plant p4"></div>
+      <div class="sand"></div>
+    </section>
+    <div class="tank-caption">✧ Two little hearts swimming in your ocean ✧</div>
+
+    <section class="balance">
+      <div><small>YOUR FOOD BALANCE</small><strong id="balance">0</strong></div>
+      <div>🐠 <span style="color:#b9d9ed;font-size:12px">Food portions</span></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Give them a little love ✨</h2>
+      <p class="hint">Choose a food package. Payment will be checked by the LUCKY OCEAN team before food is added.</p>
+      <div class="packages">
+        <button class="package active" data-amount="1000" onclick="selectPackage(this)">
+          <b>1,000 MMK</b><small>Small package</small>
+        </button>
+        <button class="package" data-amount="3000" onclick="selectPackage(this)">
+          <b>3,000 MMK</b><small>Medium package</small>
+        </button>
+        <button class="package" data-amount="5000" onclick="selectPackage(this)">
+          <b>5,000 MMK</b><small>Special package</small>
+        </button>
+      </div>
+      <button class="primary" onclick="paymentInfo()">CONTINUE TO PAYMENT</button>
+      <button class="primary feed" onclick="feedFish()">🐠 FEED THE FISH</button>
+    </section>
+
+    <div class="wish" id="wish">
+      <strong>✦ A little wish for you ✦</strong>
+      May your heart be peaceful,<br>your days be bright, and happiness find you.
+    </div>
+    <footer>LUCKY OCEAN · HAPPINESS IN EVERY LITTLE MOMENT</footer>
+  </main>
+
+  <script>
+    const tg = window.Telegram?.WebApp;
+    tg?.ready();
+    tg?.expand();
+
+    let selectedAmount = 1000;
+    let foodBalance = 0;
+
+    function selectPackage(button) {
+      document.querySelectorAll(".package").forEach(b => b.classList.remove("active"));
+      button.classList.add("active");
+      selectedAmount = Number(button.dataset.amount);
+    }
+
+    function paymentInfo() {
+      alert(
+        "Selected package: " + selectedAmount.toLocaleString() + " MMK\n\n" +
+        "KBZPay payment details will be provided here after the secure payment setup is completed.\n\n" +
+        "Please do not transfer money to an unverified number."
+      );
+    }
+
+    function feedFish() {
+      if (foodBalance < 1) {
+        alert("Your food balance is empty. Please purchase food first.");
+        return;
+      }
+      foodBalance--;
+      document.getElementById("balance").textContent = foodBalance;
+      document.getElementById("wish").innerHTML =
+        "<strong>✦ Your ocean wish ✦</strong>" +
+        "May good things find you today.<br>Stay happy, peaceful and full of hope. 💙";
+    }
+  </script>
+</body>
+</html>
