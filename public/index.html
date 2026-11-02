@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="my">
 <head>
@@ -28,7 +29,6 @@ const canvas=document.getElementById('ocean'),shell=document.querySelector('.sce
 let food=Number(localStorage.getItem('luckyOceanFood'));if(!Number.isFinite(food)||food<0)food=10;let selectedPackage=1000,feeding=false,foodTarget=null;const foodMeshes=[],fishActors=[];
 function updateBalance(){foodBalance.textContent=food;localStorage.setItem('luckyOceanFood',String(food))}updateBalance();
 
-/* SCENE + MOBILE-FRIENDLY RENDERER */
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x032b4a);scene.fog=new THREE.FogExp2(0x063957,.019);
 const camera=new THREE.PerspectiveCamera(48,1,.1,140);camera.position.set(0,1.1,22);camera.lookAt(0,-.1,-1);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.35));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;
@@ -36,55 +36,44 @@ const mat=(color,roughness=.7,metalness=0,emissive=0x000000,intensity=0)=>new TH
 scene.add(new THREE.HemisphereLight(0xa7eaff,0x062238,2.1));const sun=new THREE.DirectionalLight(0xc4f6ff,2.6);sun.position.set(-7,12,8);scene.add(sun);
 const blueLight=new THREE.PointLight(0x16bfff,36,38);blueLight.position.set(7,4,3);scene.add(blueLight);const reefLight=new THREE.PointLight(0x27e7cb,20,27);reefLight.position.set(-8,-3,2);scene.add(reefLight);
 
-/* SANDY SEABED */
 const floor=new THREE.Mesh(new THREE.PlaneGeometry(60,38),mat(0x0b5362));floor.rotation.x=-Math.PI/2;floor.position.set(0,-6,-4);scene.add(floor);
 const sand=new THREE.Mesh(new THREE.BoxGeometry(60,.5,23),mat(0x9c9670));sand.position.set(0,-6.35,-3);scene.add(sand);
 
-/* LOST UNDERWATER CITY: ruins, broken columns, archways */
 const ruins=new THREE.Group();scene.add(ruins);const stone=mat(0x39758a,.72,.22),stoneLight=mat(0x6bb0b7,.58,.25),darkStone=mat(0x1b4054,.85);
 function column(x,y,z,h,r=.35,broken=false){const g=new THREE.Group();g.position.set(x,y,z);const shaft=new THREE.Mesh(new THREE.CylinderGeometry(r*.82,r,h,9,1),stone);shaft.position.y=h/2;g.add(shaft);const cap=new THREE.Mesh(new THREE.BoxGeometry(r*3,.28,r*3),stoneLight);cap.position.y=h;g.add(cap);const base=new THREE.Mesh(new THREE.CylinderGeometry(r*1.35,r*1.5,.3,9),stoneLight);base.position.y=.12;g.add(base);if(broken){const crack=new THREE.Mesh(new THREE.DodecahedronGeometry(r*.8,0),darkStone);crack.position.set(.1,h+.25,0);g.add(crack)}ruins.add(g)}
 for(let i=0;i<7;i++)column(-15+i*5,-5.9,-12,2.8+(i%3)*1.1,.38,i%2===0);
 function arch(x,y,z,rad,tube,rotation=0){const a=new THREE.Mesh(new THREE.TorusGeometry(rad,tube,9,36,Math.PI),stoneLight);a.position.set(x,y,z);a.rotation.set(0,rotation,Math.PI);ruins.add(a);const p1=new THREE.Mesh(new THREE.BoxGeometry(.55,2.9,.65),stone);p1.position.set(x-rad,y-1.45,z);const p2=p1.clone();p2.position.x=x+rad;ruins.add(p1,p2)}
 arch(-7,-1.1,-11,2.4,.3);arch(1,-.8,-13,3.1,.32);arch(9,-1.2,-11,2.2,.28);
-// cracked fallen masonry
 for(let i=0;i<12;i++){const b=new THREE.Mesh(new THREE.BoxGeometry(.8+Math.random()*1.5,.25+Math.random()*.35,.5+Math.random()),stone);b.position.set((Math.random()-.5)*24,-5.55,-9+Math.random()*4);b.rotation.y=Math.random()*2;b.rotation.z=(Math.random()-.5)*.25;ruins.add(b)}
 
-/* ROCKS */
 const rockMat=mat(0x203d50,.9);for(let i=0;i<27;i++){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(1,1),rockMat);rock.position.set((Math.random()-.5)*27,-5.55+Math.random()*.5,-5+Math.random()*8);rock.scale.set(.5+Math.random()*1.25,.35+Math.random()*.8,.5+Math.random());rock.rotation.set(Math.random(),Math.random(),Math.random());scene.add(rock)}
 
-/* CORAL REEFS */
 const coralGroups=[];function branch(g,a,b,r,m){const va=new THREE.Vector3(...a),vb=new THREE.Vector3(...b),d=new THREE.Vector3().subVectors(vb,va);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r*.55,r,d.length(),7),m);mesh.position.copy(va).add(vb).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());g.add(mesh)}
 function coral(x,z,color,s=1){const g=new THREE.Group();g.position.set(x,-5.7,z);g.scale.setScalar(s);scene.add(g);const m=mat(color,.38,.12,color,.28);for(let i=0;i<5;i++){const h=.75+Math.random()*1.2,side=(Math.random()-.5)*1.25;branch(g,[0,0,0],[side,h,0],.15,m);branch(g,[side,h,0],[side*1.55,h+.48,0],.105,m);if(i%2===0)branch(g,[side,h*.6,0],[side-.55,h*.95,.05],.09,m)}coralGroups.push(g)}
 coral(-10,-1,0xf07878,1.15);coral(-6,-2,0x9a76c9,.85);coral(7,-1,0xffa45e,1.15);coral(10,-2,0x9a76c9,.9);coral(2,-4,0x22b9ad,.8);
 
-/* BIOLUMINESCENT CORAL + ANCIENT GLOWING CRYSTALS */
 const glowMats=[mat(0x28e9dc,.28,.1,0x16cbbd,1.8),mat(0x8e67ff,.25,.1,0x6535ff,1.7),mat(0x46caff,.25,.1,0x168dff,1.8)];const glows=[];
 for(let i=0;i<23;i++){const m=glowMats[i%3],geo=i%3===0?new THREE.SphereGeometry(.13+Math.random()*.12,8,7):new THREE.OctahedronGeometry(.18+Math.random()*.18,0);const o=new THREE.Mesh(geo,m);o.position.set((Math.random()-.5)*22,-5.2+Math.random()*.8,-3-Math.random()*7);o.rotation.set(Math.random(),Math.random(),Math.random());scene.add(o);glows.push({o,phase:Math.random()*6})}
 
-/* SWAYING SEA GRASS */
 const plants=[];const plantMats=[mat(0x168b68),mat(0x25aa79),mat(0x116b62)];function makePlant(x,z,h){const g=new THREE.Group();g.position.set(x,-5.75,z);scene.add(g);for(let i=0;i<5;i++){const leaf=new THREE.Mesh(new THREE.ConeGeometry(.16,h*.38,6),plantMats[i%3]);leaf.position.set(Math.sin(i*1.4)*.25,h*.3+i*h*.11,0);leaf.rotation.z=(i-2)*.17;leaf.scale.y=1.2;g.add(leaf)}plants.push({g,phase:Math.random()*6})}for(let i=0;i<15;i++)makePlant(-13+i*1.85,-2+Math.random()*3,2+Math.random()*2.4);
 
-/* SUNBEAMS */
 const rays=[];for(let i=0;i<8;i++){const r=new THREE.Mesh(new THREE.CylinderGeometry(.12,1.8,18,10,1,true),new THREE.MeshBasicMaterial({color:0x9ceeff,transparent:true,opacity:.045,side:THREE.DoubleSide,depthWrite:false}));r.position.set(-10+i*2.9,4,-5);r.rotation.z=(Math.random()-.5)*.18;scene.add(r);rays.push(r)}
 
-/* MODEL LOADING: animated GLB fish */
 const loader=new GLTFLoader();let loadedCount=0;function setLoadedLabel(){loadedCount++;statusText.textContent=loadedCount===2?'LOST UNDERWORLD · LIVE':`LOADING FISH ${loadedCount}/2`}
 function createFallbackFish(color){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.SphereGeometry(1,20,16),mat(color,.35,.1));body.scale.set(1.45,.7,.55);g.add(body);const tail=new THREE.Mesh(new THREE.ConeGeometry(.65,.9,8),mat(color,.35));tail.position.x=-1.5;tail.rotation.z=Math.PI/2;g.add(tail);return g}
-function loadFish(url,label,settings){return new Promise(resolve=>{loader.load(url,gltf=>{const root=new THREE.Group(),model=gltf.scene;model.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());model.position.sub(center);const longest=Math.max(size.x,size.y,size.z)||1;model.scale.setScalar(settings.length/longest);root.add(model);root.rotation.y=settings.rotation||0;scene.add(root);let mixer=null;if(gltf.animations&&gltf.animations.length){mixer=new THREE.AnimationMixer(model);const action=mixer.clipAction(gltf.animations[0]);action.reset();action.setLoop(THREE.LoopRepeat);action.play()}const actor={root,model,mixer,label,phase:Math.random()*6.28,speed:settings.speed,baseY:settings.baseY,baseZ:settings.baseZ,radiusX:settings.radiusX,radiusY:settings.radiusY,facing:1,foodSide:settings.foodSide};fishActors.push(actor);setLoadedLabel();resolve(actor)},undefined,error=>{console.error('Could not load '+url,error);const root=createFallbackFish(settings.fallbackColor);scene.add(root);const actor={root,model:root,mixer:null,label,phase:Math.random()*6.28,speed:settings.speed,baseY:settings.baseY,baseZ:settings.baseZ,radiusX:settings.radiusX,radiusY:settings.radiusY,facing:1,foodSide:settings.foodSide};fishActors.push(actor);statusText.textContent='FISH MODEL ERROR';wish.textContent=label+' model ဖိုင်ကို မတွေ့ပါ။ GLB ဖိုင်တွေကို index.html နဲ့အတူ GitHub Root ထဲတင်ထားပါ။';resolve(actor)})})}
-loadFish('./jikin-goldfish.glb','Jikin Goldfish',{length:4.2,rotation:0,speed:.55,baseY:1.05,baseZ:1.5,radiusX:6.2,radiusY:1.6,foodSide:-1,fallbackColor:0xffa72e});
-loadFish('./betta-splendens.glb','Pearl Blue Betta',{length:3.8,rotation:0,speed:.7,baseY:-1.25,baseZ:-1.5,radiusX:7.1,radiusY:1.4,foodSide:1,fallbackColor:0x238ddd});
+function loadFish(url,label,settings){return new Promise(resolve=>{loader.load(url,gltf=>{const root=new THREE.Group(),model=gltf.scene;model.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());model.position.sub(center);const longest=Math.max(size.x,size.y,size.z)||1;model.scale.setScalar(settings.length/longest);root.add(model);root.rotation.y=settings.rotation||0;scene.add(root);let mixer=null;if(gltf.animations&&gltf.animations.length){mixer=new THREE.AnimationMixer(model);const action=mixer.clipAction(gltf.animations[0]);action.reset();action.setLoop(THREE.LoopRepeat);action.play()}const actor={root,model,mixer,label,phase:Math.random()*6.28,speed:settings.speed,baseY:settings.baseY,baseZ:settings.baseZ,radiusX:settings.radiusX,radiusY:settings.radiusY,facing:1,foodSide:settings.foodSide};fishActors.push(actor);setLoadedLabel();resolve(actor)},undefined,error=>{console.error('Could not load '+url,error);const root=createFallbackFish(settings.fallbackColor);scene.add(root);const actor={root,model:root,mixer:null,label,phase:Math.random()*6.28,speed:settings.speed,baseY:settings.baseY,baseZ:settings.baseZ,radiusX:settings.radiusX,radiusY:settings.radiusY,facing:1,foodSide:settings.foodSide};fishActors.push(actor);statusText.textContent='FISH MODEL ERROR';wish.textContent=label+' model ဖိုင်ကို မတွေ့ပါ။ GLB ဖိုင်တွေကို public Folder ထဲက index.html နဲ့အတူ ထည့်ထားပါ။';resolve(actor)})})}
 
-/* DISTANT SMALL FISH */
+/* Correct GitHub filenames, including spaces and parentheses */
+loadFish('./jikin-goldfish%20%281%29.glb','Jikin Goldfish',{length:4.2,rotation:0,speed:.55,baseY:1.05,baseZ:1.5,radiusX:6.2,radiusY:1.6,foodSide:-1,fallbackColor:0xffa72e});
+loadFish('./betta-splendens%20%281%29.glb','Pearl Blue Betta',{length:3.8,rotation:0,speed:.7,baseY:-1.25,baseZ:-1.5,radiusX:7.1,radiusY:1.4,foodSide:1,fallbackColor:0x238ddd});
+
 const littleFish=[];function tinyFish(color){const g=new THREE.Group(),b=new THREE.Mesh(new THREE.SphereGeometry(.15,9,7),mat(color,.35));b.scale.set(1.6,.65,.6);g.add(b);const t=new THREE.Mesh(new THREE.ConeGeometry(.15,.35,7),mat(color));t.position.x=-.27;t.rotation.z=Math.PI/2;g.add(t);g.userData={phase:Math.random()*6.28,radius:3+Math.random()*5,speed:.25+Math.random()*.25};scene.add(g);littleFish.push(g)}for(let i=0;i<9;i++)tinyFish(i%2?0x65dfff:0xffd27c);
 
-/* BUBBLES */
 const bubbles=[];const bubbleGeo=new THREE.SphereGeometry(.045,7,6),bubbleMat=new THREE.MeshBasicMaterial({color:0xc8f7ff,transparent:true,opacity:.36});for(let i=0;i<48;i++){const b=new THREE.Mesh(bubbleGeo,bubbleMat);b.position.set((Math.random()-.5)*24,-5+Math.random()*12,(Math.random()-.5)*12);b.userData={speed:.35+Math.random()*.7,phase:Math.random()*6};scene.add(b);bubbles.push(b)}
 
-/* FOOD */
 function dropFood(){const cx=(Math.random()-.5)*3;for(let i=0;i<7;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(.09,8,7),new THREE.MeshStandardMaterial({color:0xffc64b,emissive:0x6b3600,roughness:.4}));p.position.set(cx+(Math.random()-.5)*2,5.2,1+(Math.random()-.5)*2);p.userData={speed:1.2+Math.random()*.7,wobble:Math.random()*5};scene.add(p);foodMeshes.push(p)}foodTarget={x:cx,y:-2.2,z:1,time:performance.now()}}
 function animateFish(actor,time,delta){const p=time*actor.speed+actor.phase;let tx=Math.sin(p)*actor.radiusX,ty=actor.baseY+Math.sin(p*1.45)*actor.radiusY,tz=actor.baseZ+Math.cos(p*.8)*1.1;if(foodTarget&&performance.now()-foodTarget.time<5200){tx=foodTarget.x+actor.foodSide*1.05;ty=foodTarget.y+(actor.foodSide<0?.25:-.25);tz=foodTarget.z+.5}const oldX=actor.root.position.x,smooth=Math.min(1,delta*1.25);actor.root.position.x+=(tx-actor.root.position.x)*smooth;actor.root.position.y+=(ty-actor.root.position.y)*smooth;actor.root.position.z+=(tz-actor.root.position.z)*smooth;const dx=actor.root.position.x-oldX;if(Math.abs(dx)>.001)actor.facing=dx<0?-1:1;actor.root.rotation.y=actor.facing<0?Math.PI:0;actor.root.rotation.z=Math.sin(p*1.5)*.025;if(actor.mixer)actor.mixer.update(delta)}
 
-/* SOUND ENGINE */
 let audioContext=null,masterGain=null,ambientGain=null,musicGain=null,soundEnabled=false;function noiseBuffer(ctx){const b=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*.32;return b}
 function startAmbient(){const ctx=audioContext,n=ctx.createBufferSource();n.buffer=noiseBuffer(ctx);n.loop=true;const f=ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=420;const ng=ctx.createGain();ng.gain.value=.15;n.connect(f);f.connect(ng);ng.connect(ambientGain);n.start();const o=ctx.createOscillator(),og=ctx.createGain();o.type='sine';o.frequency.value=68;og.gain.value=.055;o.connect(og);og.connect(ambientGain);o.start();[110,164.81,220].forEach((hz,i)=>{const a=ctx.createOscillator(),g=ctx.createGain();a.type='sine';a.frequency.value=hz;g.gain.value=i===0?.025:.009;a.connect(g);g.connect(musicGain);a.start()})}
 function setVolume(){const v=Number(document.getElementById('volumeSlider').value)/100;document.getElementById('volumeValue').textContent=Math.round(v*100)+'%';if(masterGain&&audioContext)masterGain.gain.setTargetAtTime(v,audioContext.currentTime,.08)}
@@ -97,7 +86,6 @@ function feedFish(){if(feeding)return;if(food<=0){wish.textContent='အစာက
 document.getElementById('feedButton').addEventListener('click',feedFish);
 document.querySelectorAll('.package').forEach(btn=>btn.addEventListener('click',()=>{selectedPackage=Number(btn.dataset.amount);document.querySelectorAll('.package').forEach(b=>b.classList.toggle('active',b===btn));wish.textContent=selectedPackage.toLocaleString('en-US')+' MMK အစာ Package ကို ရွေးထားပါတယ်။ Demo အတွက်သာ ဖြစ်ပါတယ်။'}));
 
-/* RESIZE + RENDER */
 function resize(){const w=shell.clientWidth,h=shell.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}window.addEventListener('resize',resize);resize();
 const clock=new THREE.Clock();let running=true;document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running)clock.getDelta()});
 function render(){requestAnimationFrame(render);if(!running)return;const delta=Math.min(clock.getDelta(),.04),time=clock.elapsedTime;fishActors.forEach(f=>animateFish(f,time,delta));littleFish.forEach(f=>{const d=f.userData,a=time*d.speed+d.phase;f.position.set(Math.sin(a)*d.radius,2+Math.sin(a*1.4)*1.2,-5+Math.cos(a)*1.8);f.rotation.y=Math.cos(a)>0?0:Math.PI});plants.forEach(p=>p.g.rotation.z=Math.sin(time*.75+p.phase)*.13);bubbles.forEach(b=>{b.position.y+=b.userData.speed*delta;b.position.x+=Math.sin(time+b.userData.phase)*.0015;if(b.position.y>7){b.position.y=-5.8;b.position.x=(Math.random()-.5)*24}});rays.forEach((r,i)=>{r.rotation.z=Math.sin(time*.22+i)*.09;r.material.opacity=.035+Math.sin(time*.55+i)*.014});glows.forEach(g=>{g.o.material.emissiveIntensity=1.2+Math.sin(time*1.5+g.phase)*.55;g.o.rotation.y+=delta*.25});for(let i=foodMeshes.length-1;i>=0;i--){const p=foodMeshes[i];p.position.y-=p.userData.speed*delta;p.position.x+=Math.sin(time*3+p.userData.wobble)*.004;if(p.position.y<-5.5){scene.remove(p);p.geometry.dispose();p.material.dispose();foodMeshes.splice(i,1)}}if(foodTarget&&performance.now()-foodTarget.time>5200)foodTarget=null;blueLight.position.x=7+Math.sin(time*.3)*2;reefLight.intensity=17+Math.sin(time*.7)*3;renderer.render(scene,camera)}
