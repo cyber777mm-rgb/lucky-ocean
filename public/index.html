@@ -1,138 +1,497 @@
-from PIL import Image
-from pathlib import Path
-import zipfile, textwrap
-
-base = Path("/mnt/data")
-source = base / "a_vibrant_cinematic_aquarium_app_game_interface_i.png"
-img = Image.open(source).convert("RGB")
-
-# Crop the central underwater environment from the generated concept image,
-# excluding the title/header and bottom controls so the web UI can be real HTML.
-scene = img.crop((0, 185, img.width, 930))
-scene_path = base / "lucky-ocean-scene.jpg"
-scene.save(scene_path, quality=92, optimize=True)
-
-html = r'''<!doctype html>
+<!DOCTYPE html>
 <html lang="my">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#03152f">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#03152b">
 <title>LUCKY OCEAN</title>
+
 <style>
-:root{--cyan:#38dfff;--blue:#087bff;--gold:#ffd45c;--ink:#03142c}
-*{box-sizing:border-box}
-body{margin:0;background:#020b1c;color:#fff;font-family:system-ui,"Noto Sans Myanmar",sans-serif}
-.app{width:min(100%,620px);min-height:100svh;margin:auto;overflow:hidden;background:radial-gradient(ellipse at 50% 0,#123c70,#020b1c 70%);padding:12px 12px 20px}
-.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.round{width:42px;height:42px;border:1px solid #54dfff;border-radius:50%;background:linear-gradient(#1265bf,#061d49);box-shadow:0 0 15px #00bfff88;color:white;font-size:20px}
-.brand{flex:1;text-align:center;color:var(--gold);font-family:Georgia,serif;font-weight:900;font-size:clamp(25px,7vw,39px);letter-spacing:1px;text-shadow:0 2px 0 #713900,0 0 16px #ffcb46}
-.sub{text-align:center;color:#d7f8ff;font-size:12px;margin:0 0 10px}
-.statusrow{display:flex;justify-content:space-between;gap:8px;margin-bottom:8px}
-.panel{background:#031c3bdc;border:1px solid #42dfff;border-radius:15px;padding:9px 11px;box-shadow:inset 0 0 12px #1ca9ff55,0 0 14px #00aaff44;font-size:13px}
-.meter{height:8px;background:#102947;border-radius:20px;margin-top:6px;overflow:hidden}
-.meter span{display:block;width:98%;height:100%;background:linear-gradient(90deg,#42e6a1,#baff4c);box-shadow:0 0 9px #5cff9d}
-.aquarium{position:relative;height:clamp(430px,112vw,610px);border:2px solid #48dfff;border-radius:20px;overflow:hidden;background:#063a69 url("lucky-ocean-scene.jpg") center center/cover no-repeat;box-shadow:0 0 22px #00bfff88,inset 0 0 35px #70eaff55}
-.aquarium:before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#a8f7ff22,transparent 24%,#00152b22 75%,#00101f55);pointer-events:none}
-.caustic{position:absolute;inset:-20%;background:repeating-linear-gradient(115deg,transparent 0 35px,#b8faff12 38px,transparent 43px 78px);mix-blend-mode:screen;animation:light 12s linear infinite}
-@keyframes light{to{transform:translateX(8%) translateY(3%)}}
-.bubble{position:absolute;bottom:-25px;width:8px;height:8px;border:1px solid #d9fbffbb;border-radius:50%;box-shadow:0 0 7px #9ff}
-.b1{left:13%;animation:rise 8s linear infinite}.b2{left:32%;width:5px;height:5px;animation:rise 6s 2s linear infinite}.b3{left:69%;animation:rise 9s 1s linear infinite}.b4{left:87%;width:6px;height:6px;animation:rise 7s 3s linear infinite}
-@keyframes rise{to{transform:translateY(-680px) translateX(18px);opacity:0}}
-.fish{position:absolute;z-index:2;width:92px;filter:drop-shadow(0 4px 8px #00162a99);animation:swim 9s ease-in-out infinite alternate}
-.fish.gold{top:31%;left:12%}.fish.pearl{top:53%;right:8%;width:82px;animation-delay:-3s}
-@keyframes swim{0%{transform:translate(0,0) scaleX(1)}45%{transform:translate(38px,-17px) scaleX(1)}50%{transform:translate(42px,-15px) scaleX(-1)}100%{transform:translate(-5px,12px) scaleX(-1)}}
-.feedfloat{position:absolute;z-index:4;left:50%;top:48%;transform:translate(-50%,-50%);font-size:21px;display:none;animation:drop 1.6s ease-in forwards}
-@keyframes drop{to{transform:translate(-50%,170px) scale(.45);opacity:0}}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
-.metric{background:#041c3c;border:1px solid #238ed8;border-radius:13px;padding:10px;text-align:center;font-size:12px}
-.metric b{display:block;color:var(--gold);font-size:17px;margin-top:3px}
-.packages{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
-.pkg{border:1px solid #238ed8;background:#061c3a;color:white;border-radius:12px;padding:11px 3px;font-weight:700}
-.pkg.active{border:2px solid var(--gold);box-shadow:0 0 13px #ffcf4c88;color:var(--gold)}
-.feed{width:100%;border:1px solid #a6f8ff;border-radius:18px;padding:15px;background:linear-gradient(100deg,#087bff,#00c9ed);color:#001b36;font-weight:900;font-size:18px;box-shadow:0 0 22px #00cfff99}
-.note{text-align:center;color:#bdefff;font-size:11px;line-height:1.7;margin:10px 4px}
-.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}
-.nav button{border:1px solid #278fdd;background:#051a38;color:#e9fbff;border-radius:12px;padding:11px 2px;font-size:12px}
-.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);width:min(90%,420px);background:#061d3d;border:1px solid var(--cyan);border-radius:13px;padding:12px;text-align:center;box-shadow:0 0 20px #00bfff88;display:none;z-index:10}
-@media(min-width:520px){.app{padding:18px}.aquarium{height:590px}}
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  background:
+    radial-gradient(ellipse at 50% 0%, #174e78 0%, transparent 55%),
+    linear-gradient(180deg, #061d38, #020817 90%);
+}
+
+.app {
+  width: 100%;
+  max-width: 520px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 18px 14px 30px;
+  overflow: hidden;
+}
+
+.header {
+  text-align: center;
+  padding: 10px 0 18px;
+}
+
+.header h1 {
+  margin: 0;
+  letter-spacing: 5px;
+  font-size: 27px;
+  color: #9beaff;
+  text-shadow: 0 0 18px #28bfff;
+}
+
+.header p {
+  margin: 7px 0 0;
+  color: #b7d9ed;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.balance {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.balance-card {
+  flex: 1;
+  padding: 13px;
+  border: 1px solid #4ccfff55;
+  border-radius: 14px;
+  background: #092c49bb;
+  box-shadow: 0 0 18px #00bfff18;
+}
+
+.balance-card small {
+  display: block;
+  color: #9cc8dc;
+  margin-bottom: 6px;
+}
+
+.balance-card strong {
+  color: #ffe28a;
+  font-size: 18px;
+}
+
+.tank {
+  position: relative;
+  height: 410px;
+  width: 100%;
+  overflow: hidden;
+  border: 3px solid #6bdcff;
+  border-radius: 24px;
+  background:
+    radial-gradient(ellipse at 50% 15%, #55dfff33, transparent 45%),
+    linear-gradient(180deg, #0a5a83 0%, #073a63 45%, #031b3b 100%);
+  box-shadow:
+    inset 0 0 35px #8ceaff55,
+    0 0 25px #00bfff55;
+}
+
+.tank::before {
+  content: "";
+  position: absolute;
+  inset: -20% 0 0;
+  background: repeating-linear-gradient(
+    110deg,
+    transparent 0 45px,
+    #b5f7ff13 48px 53px,
+    transparent 58px 100px
+  );
+  animation: rays 9s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes rays {
+  from { transform: translateX(-40px); }
+  to { transform: translateX(40px); }
+}
+
+.water-glow {
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  width: 60%;
+  height: 55%;
+  border-radius: 50%;
+  background: #63eaff18;
+  filter: blur(35px);
+}
+
+.bubble {
+  position: absolute;
+  bottom: -20px;
+  width: 7px;
+  height: 7px;
+  border: 1px solid #c7f8ffbb;
+  border-radius: 50%;
+  background: #b9f8ff22;
+  animation: rise linear infinite;
+}
+
+@keyframes rise {
+  to {
+    transform: translateY(-460px);
+    opacity: 0;
+  }
+}
+
+.plant {
+  position: absolute;
+  bottom: 30px;
+  width: 12px;
+  height: 95px;
+  border-radius: 100% 0;
+  background: linear-gradient(90deg, #0b694f, #35c58b);
+  transform-origin: bottom;
+  animation: plantMove 3s ease-in-out infinite alternate;
+}
+
+@keyframes plantMove {
+  to { transform: rotate(12deg); }
+}
+
+.rock {
+  position: absolute;
+  bottom: 18px;
+  width: 75px;
+  height: 38px;
+  border-radius: 50% 50% 25% 25%;
+  background: linear-gradient(140deg, #718b9a, #1b3449);
+  box-shadow: inset -8px -7px 12px #06172b;
+}
+
+.sand {
+  position: absolute;
+  bottom: 0;
+  height: 26px;
+  width: 100%;
+  background: linear-gradient(#c4b68a, #726b57);
+  opacity: .8;
+}
+
+.fish {
+  position: absolute;
+  width: 105px;
+  height: 65px;
+  z-index: 4;
+  transform-origin: center;
+  animation: swim 13s ease-in-out infinite alternate;
+}
+
+.fish svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 4px 7px #00101e99);
+}
+
+.fish.gold {
+  top: 25%;
+  left: 5%;
+}
+
+.fish.blue {
+  top: 55%;
+  left: 55%;
+  width: 92px;
+  animation-duration: 17s;
+  animation-delay: -5s;
+}
+
+@keyframes swim {
+  0% {
+    transform: translate(0, 0) scaleX(1);
+  }
+  25% {
+    transform: translate(100px, 25px) scaleX(1);
+  }
+  50% {
+    transform: translate(190px, -25px) scaleX(-1);
+  }
+  75% {
+    transform: translate(80px, 35px) scaleX(-1);
+  }
+  100% {
+    transform: translate(0, -10px) scaleX(1);
+  }
+}
+
+.feed-food {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  z-index: 8;
+  font-size: 13px;
+  animation: foodFall 2s ease-in forwards;
+}
+
+@keyframes foodFall {
+  to {
+    transform: translateY(300px);
+    opacity: 0;
+  }
+}
+
+.controls {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid #4ccfff55;
+  border-radius: 18px;
+  background: #082641;
+}
+
+.controls h2 {
+  margin: 0 0 12px;
+  color: #9beaff;
+  font-size: 17px;
+}
+
+.feed-button {
+  width: 100%;
+  padding: 15px;
+  border: 0;
+  border-radius: 13px;
+  color: #06213a;
+  background: linear-gradient(90deg, #8beaff, #f5d68a);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 18px #48dfff44;
+}
+
+.packages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.package {
+  padding: 12px 5px;
+  border: 1px solid #6adfff66;
+  border-radius: 12px;
+  color: #fff;
+  background: #0b3858;
+  cursor: pointer;
+}
+
+.package.active {
+  border-color: #ffe18b;
+  background: #26516a;
+  box-shadow: 0 0 12px #ffe18b55;
+}
+
+.package strong {
+  display: block;
+  color: #ffe18b;
+  margin-bottom: 5px;
+}
+
+.wish {
+  margin-top: 15px;
+  text-align: center;
+  color: #b8e7f8;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.notice {
+  margin-top: 15px;
+  color: #8caec2;
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.6;
+}
 </style>
 </head>
+
 <body>
-<main class="app">
-  <header class="top">
-    <button class="round" aria-label="ပင်မ">⌂</button>
-    <div class="brand">♛ LUCKY OCEAN</div>
-    <button class="round" aria-label="အကူအညီ" onclick="say('LUCKY OCEAN မှ ကြိုဆိုပါတယ်။ ငါးလေးတွေကို အစာကျွေးပြီး ပျော်ရွှင်စွာ ကြည့်ရှုနိုင်ပါတယ်။')">?</button>
+<div class="app">
+
+  <header class="header">
+    <h1>LUCKY OCEAN</h1>
+    <p>YOUR LITTLE UNDERWATER WORLD</p>
   </header>
-  <div class="sub">🐠 ပျော်ရွှင်မှုနဲ့ ကံကောင်းခြင်းတို့ရဲ့ ရေအောက်ကမ္ဘာ 💙</div>
-  <div class="statusrow">
-    <div class="panel" style="width:58%">⭐ ငါးလေးတွေရဲ့ ကျန်းမာရေး <b style="color:#ffe16a">98%</b><div class="meter"><span></span></div></div>
-    <div class="panel" style="text-align:center">🐟 အစာလက်ကျန်<br><b id="food">0</b></div>
-  </div>
-  <section class="aquarium" id="tank" aria-label="ရေအောက်ငါးကန်">
-    <div class="caustic"></div>
-    <span class="bubble b1"></span><span class="bubble b2"></span><span class="bubble b3"></span><span class="bubble b4"></span>
-    <svg class="fish gold" viewBox="0 0 150 100" role="img" aria-label="ရွှေရောင်ငါး">
-      <path d="M48 49 Q12 7 4 10 Q18 48 4 88 Q24 88 52 58Z" fill="#ffad28" stroke="#ffe8a0" stroke-width="2"/>
-      <path d="M66 27 Q80 0 104 17 L91 36Z" fill="#ffc34a"/><path d="M66 69 Q88 94 105 78 L91 62Z" fill="#ffb52f"/>
-      <ellipse cx="80" cy="49" rx="48" ry="28" fill="#ffb52f" stroke="#fff0b3" stroke-width="2"/>
-      <path d="M53 31Q80 45 53 67M67 23Q94 47 67 75M83 22Q109 48 83 76" fill="none" stroke="#ffe08a" stroke-width="2" opacity=".8"/>
-      <circle cx="112" cy="42" r="7" fill="#fff"/><circle cx="114" cy="42" r="4" fill="#10284b"/><circle cx="115" cy="41" r="1.5" fill="#fff"/>
-      <path d="M119 56q8 5 12-1" fill="none" stroke="#9b4d16" stroke-width="2"/>
-    </svg>
-    <svg class="fish pearl" viewBox="0 0 150 100" role="img" aria-label="ပုလဲပြာငါး">
-      <path d="M48 49 Q12 7 4 10 Q18 48 4 88 Q24 88 52 58Z" fill="#b5edff" stroke="#fff" stroke-width="2"/>
-      <path d="M66 27 Q80 0 104 17 L91 36Z" fill="#d7f8ff"/><path d="M66 69 Q88 94 105 78 L91 62Z" fill="#a5e6ff"/>
-      <ellipse cx="80" cy="49" rx="48" ry="28" fill="#63bfff" stroke="#e9fdff" stroke-width="2"/>
-      <path d="M53 31Q80 45 53 67M67 23Q94 47 67 75M83 22Q109 48 83 76" fill="none" stroke="#d9faff" stroke-width="2" opacity=".9"/>
-      <circle cx="112" cy="42" r="7" fill="#fff"/><circle cx="114" cy="42" r="4" fill="#10284b"/><circle cx="115" cy="41" r="1.5" fill="#fff"/>
-      <path d="M119 56q8 5 12-1" fill="none" stroke="#27618b" stroke-width="2"/>
-    </svg>
-    <div class="feedfloat" id="foodDrop">🐟 • 🟡 • 🟡</div>
+
+  <section class="balance">
+    <div class="balance-card">
+      <small>အစာလက်ကျန်</small>
+      <strong id="foodBalance">10</strong>
+    </div>
+    <div class="balance-card">
+      <small>ငါးလေးများ</small>
+      <strong>2 🐠</strong>
+    </div>
   </section>
-  <section class="metrics">
-    <div class="metric">💰 လက်ကျန်ငွေ <b>MMK <span id="money">0</span></b></div>
-    <div class="metric">💗 ငါးလေးတွေရဲ့ ပျော်ရွှင်မှု <b>ကောင်းမွန်</b></div>
+
+  <section class="tank" id="tank">
+    <div class="water-glow"></div>
+
+    <div class="fish gold" id="goldFish">
+      <svg viewBox="0 0 120 70">
+        <path d="M22 35 L3 12 Q-3 35 3 58 Z"
+          fill="#ffb52e" stroke="#ffe29b" stroke-width="2"/>
+        <ellipse cx="58" cy="35" rx="39" ry="23"
+          fill="url(#gold)" stroke="#ffe29b" stroke-width="2"/>
+        <path d="M53 15 Q68 -2 82 15"
+          fill="#ffcf55" stroke="#ffe29b" stroke-width="2"/>
+        <path d="M55 55 Q72 72 87 54"
+          fill="#e88b22" stroke="#ffe29b" stroke-width="2"/>
+        <circle cx="82" cy="28" r="5" fill="white"/>
+        <circle cx="84" cy="28" r="2.5" fill="#102238"/>
+        <path d="M92 40 Q100 45 106 38"
+          fill="none" stroke="#783c19" stroke-width="2"/>
+        <defs>
+          <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
+            <stop stop-color="#fff0a0"/>
+            <stop offset=".45" stop-color="#ffbd36"/>
+            <stop offset="1" stop-color="#d66b13"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="fish blue" id="blueFish">
+      <svg viewBox="0 0 120 70">
+        <path d="M22 35 L3 12 Q-3 35 3 58 Z"
+          fill="#76dfff" stroke="#d8f8ff" stroke-width="2"/>
+        <ellipse cx="58" cy="35" rx="39" ry="23"
+          fill="url(#pearl)" stroke="#d8f8ff" stroke-width="2"/>
+        <path d="M55 15 Q68 -3 82 15"
+          fill="#a5ecff" stroke="#d8f8ff" stroke-width="2"/>
+        <path d="M55 55 Q72 72 87 54"
+          fill="#398ac4" stroke="#d8f8ff" stroke-width="2"/>
+        <circle cx="82" cy="28" r="5" fill="white"/>
+        <circle cx="84" cy="28" r="2.5" fill="#102238"/>
+        <path d="M92 40 Q100 45 106 38"
+          fill="none" stroke="#174d76" stroke-width="2"/>
+        <defs>
+          <linearGradient id="pearl" x1="0" x2="1" y1="0" y2="1">
+            <stop stop-color="#e8ffff"/>
+            <stop offset=".5" stop-color="#69d9ff"/>
+            <stop offset="1" stop-color="#2874ba"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="plant" style="left:8%;height:95px"></div>
+    <div class="plant" style="left:16%;height:70px;animation-delay:-1s"></div>
+    <div class="plant" style="right:12%;height:110px"></div>
+    <div class="plant" style="right:20%;height:75px;animation-delay:-2s"></div>
+
+    <div class="rock" style="left:28%"></div>
+    <div class="rock" style="right:25%;width:55px"></div>
+    <div class="sand"></div>
   </section>
-  <div style="text-align:center;font-size:13px;color:#d9faff">အစာဝယ်ယူရန် ပမာဏရွေးပါ</div>
-  <div class="packages">
-    <button class="pkg active" data-amount="1000" onclick="choose(this)">1,000 MMK</button>
-    <button class="pkg" data-amount="3000" onclick="choose(this)">3,000 MMK</button>
-    <button class="pkg" data-amount="5000" onclick="choose(this)">5,000 MMK</button>
-  </div>
-  <button class="feed" onclick="feedFish()">🐠 ငါးလေးတွေကို အစာကျွေးမယ်</button>
-  <p class="note">အစာဝယ်ယူမှုနှင့် ငွေပေးချေမှုစနစ်ကို မချိတ်ဆက်ရသေးပါ။<br>ဤစာမျက်နှာသည် လက်ရှိ ဒီဇိုင်းစမ်းသပ်မှုအဆင့် ဖြစ်ပါတယ်။</p>
-  <nav class="nav">
-    <button onclick="say('ဆိုင်လုပ်ဆောင်ချက်ကို မကြာမီ ထည့်သွင်းပါမယ်။')">🛍️ ဆိုင်</button>
-    <button onclick="say('လက်ဆောင်များကို မကြာမီ ထည့်သွင်းပါမယ်။')">🎁 လက်ဆောင်</button>
-    <button onclick="say('ငါးလေးတွေရဲ့ အခြေအနေကို မကြာမီ ပြသပါမယ်။')">📊 အခြေအနေ</button>
-    <button onclick="say('ကူညီရန် စာမျက်နှာကို မကြာမီ ထည့်သွင်းပါမယ်။')">💬 အကူအညီ</button>
-  </nav>
-</main>
-<div class="toast" id="toast"></div>
+
+  <section class="controls">
+    <h2>🐠 ငါးလေးတွေကို ဂရုစိုက်မယ်</h2>
+
+    <button class="feed-button" onclick="feedFish()">
+      ငါးလေးတွေကို အစာကျွေးမယ်
+    </button>
+
+    <div class="packages">
+      <button class="package active" onclick="selectPackage(1000,this)">
+        <strong>1,000 MMK</strong>
+        အစာ 10
+      </button>
+      <button class="package" onclick="selectPackage(3000,this)">
+        <strong>3,000 MMK</strong>
+        အစာ 35
+      </button>
+      <button class="package" onclick="selectPackage(5000,this)">
+        <strong>5,000 MMK</strong>
+        အစာ 60
+      </button>
+    </div>
+
+    <div class="wish" id="wish">
+      🌊 ရေအောက်ကမ္ဘာလေးထဲကို ကြိုဆိုပါတယ်။<br>
+      ငါးလေးတွေနဲ့ အချိန်လေးကို ပျော်ရွှင်စွာ ဖြတ်သန်းပါ။
+    </div>
+
+    <div class="notice">
+      ဤအရာသည် Demo Aquarium ဖြစ်သည်။<br>
+      MMK package များအတွက် ငွေပေးချေမှုစနစ် မချိတ်ဆက်ရသေးပါ။
+    </div>
+  </section>
+
+</div>
+
 <script>
-let selected=1000;
-function choose(el){document.querySelectorAll('.pkg').forEach(x=>x.classList.remove('active'));el.classList.add('active');selected=Number(el.dataset.amount)}
-function say(t){const el=document.getElementById('toast');el.textContent=t;el.style.display='block';clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>el.style.display='none',2600)}
-function feedFish(){
-  say('အစာကျွေးစနစ်ကို မချိတ်ဆက်ရသေးပါ။ ငွေပေးချေမှုမပြုလုပ်ပါနှင့်။');
-  const d=document.getElementById('foodDrop');d.style.display='block';d.style.animation='none';void d.offsetWidth;d.style.animation='drop 1.6s ease-in forwards';
-  setTimeout(()=>d.style.display='none',1700);
+let food = 10;
+let selectedPackage = 1000;
+
+function updateBalance() {
+  document.getElementById("foodBalance").textContent = food;
 }
+
+function selectPackage(amount, button) {
+  selectedPackage = amount;
+
+  document.querySelectorAll(".package").forEach(item => {
+    item.classList.remove("active");
+  });
+
+  button.classList.add("active");
+
+  document.getElementById("wish").textContent =
+    amount.toLocaleString("en-US") +
+    " MMK အစာ Package ကို ရွေးထားပါတယ်။ Demo အတွက်သာ ဖြစ်ပါတယ်။";
+}
+
+function feedFish() {
+  if (food <= 0) {
+    document.getElementById("wish").textContent =
+      "အစာကုန်သွားပါပြီ။ Package ဝယ်ယူမှုကို မချိတ်ဆက်ရသေးပါ။";
+    return;
+  }
+
+  food--;
+  updateBalance();
+
+  const tank = document.getElementById("tank");
+
+  for (let i = 0; i < 5; i++) {
+    const pellet = document.createElement("div");
+    pellet.className = "feed-food";
+    pellet.textContent = "🟡";
+    pellet.style.left = (35 + Math.random() * 30) + "%";
+    pellet.style.animationDelay = (i * 0.15) + "s";
+    tank.appendChild(pellet);
+
+    setTimeout(() => pellet.remove(), 2500);
+  }
+
+  document.getElementById("wish").textContent =
+    "🐠 ငါးလေးတွေ အစာစားနေကြပါပြီ။ ပျော်ရွှင်ပါစေ။";
+}
+
+function createBubble() {
+  const tank = document.getElementById("tank");
+  const bubble = document.createElement("div");
+
+  bubble.className = "bubble";
+  bubble.style.left = Math.random() * 95 + "%";
+  bubble.style.animationDuration = (4 + Math.random() * 5) + "s";
+  bubble.style.width = (4 + Math.random() * 7) + "px";
+  bubble.style.height = bubble.style.width;
+
+  tank.appendChild(bubble);
+
+  setTimeout(() => bubble.remove(), 10000);
+}
+
+setInterval(createBubble, 450);
+updateBalance();
 </script>
+
 </body>
-</html>'''
-
-html_path = base / "lucky-ocean-cinematic-index.html"
-html_path.write_text(html, encoding="utf-8")
-
-zip_path = base / "lucky-ocean-cinematic-update.zip"
-with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
-    z.write(html_path, "public/index.html")
-    z.write(scene_path, "public/lucky-ocean-scene.jpg")
-
-print("ဖိုင် ၂ ခု ပြင်ဆင်ပြီးပါပြီ။")
-print(f"HTML: {html_path.stat().st_size:,} bytes")
-print(f"Scene image: {scene_path.stat().st_size:,} bytes")
-print(f"ZIP: {zip_path.stat().st_size:,} bytes")
+</html>
