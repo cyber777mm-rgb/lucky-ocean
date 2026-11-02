@@ -1,49 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="my">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#031a2d">
-<title>LUCKY OCEAN</title>
-
-<style>
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#031a2d;color:#fff;font-family:Arial,sans-serif}
-#world{position:fixed;inset:0;width:100%;height:100%;display:block}
-.overlay{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:18px 15px calc(18px + env(safe-area-inset-bottom));}
-.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.brand{font-size:22px;font-weight:900;letter-spacing:2px;text-shadow:0 0 14px #32dfff}
-.subtitle{font-size:9px;letter-spacing:2px;color:#9ddff2;margin-top:4px}
-.stats{display:flex;gap:7px}
-.stat{background:#031d31bb;border:1px solid #4bdfff55;border-radius:12px;padding:9px 11px;backdrop-filter:blur(8px);text-align:center;min-width:76px}
-.stat small{display:block;color:#9ddff2;font-size:9px;margin-bottom:4px}
-.stat strong{font-size:15px;color:#fff}
-.bottom{pointer-events:auto;display:flex;flex-direction:column;gap:10px}
-.status{text-align:center;font-size:11px;color:#a9e9fa;text-shadow:0 1px 5px #001a2b}
-.panel{background:linear-gradient(145deg,#062a42eF,#031629ee);border:1px solid #3cd9ff55;border-radius:18px;padding:13px;box-shadow:0 0 25px #00bfff18;backdrop-filter:blur(12px)}
-.panel-title{font-size:11px;letter-spacing:1.5px;color:#9beaff;margin-bottom:10px;font-weight:bold}
-.actions{display:flex;gap:9px}
-button{border:0;border-radius:12px;padding:13px 15px;font-weight:800;color:white;cursor:pointer}
-#feedBtn{flex:1;background:linear-gradient(110deg,#00bde8,#0875cb);box-shadow:0 5px 18px #00bfff35}
-#soundBtn{background:#103b55;border:1px solid #4bdfff66;min-width:54px}
-.packages{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.package{background:#0a3852;border:1px solid #36cfff66;border-radius:12px;padding:11px 5px;text-align:center}
-.package strong{display:block;font-size:14px;color:#fff}
-.package span{display:block;font-size:10px;color:#9ceaff;margin-top:5px}
-.package button{margin-top:8px;width:100%;padding:8px 3px;font-size:10px;background:#087fba}
-.sound-row{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:10px;color:#b9e9f7}
-.sound-row input{flex:1;accent-color:#16cfff}
-#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#031a2d;z-index:10;color:#8deaff;letter-spacing:3px;font-size:13px;transition:opacity .6s}
-#loading.hide{opacity:0;pointer-events:none}
-#message{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#052a40ee;border:1px solid #4bdfff;border-radius:12px;padding:12px 18px;font-size:12px;display:none;z-index:20;text-align:center;max-width:85%}
-@media(max-height:650px){
- .overlay{padding:12px}
- .panel{padding:10px}
- .package{padding:8px 4px}
- button{padding:10px}
- .brand{font-size:18px}
-}
-</style>
+<meta name="theme-color" content="#031b32">
+<title>LUCKY OCEAN — ရေအောက်ကမ္ဘာ</title>
 
 <script type="importmap">
 {
@@ -52,65 +13,223 @@ button{border:0;border-radius:12px;padding:13px 15px;font-weight:800;color:white
   }
 }
 </script>
+
+<style>
+*{box-sizing:border-box}
+html,body{
+  margin:0;width:100%;height:100%;overflow:hidden;
+  background:#031b32;color:#fff;
+  font-family:system-ui,"Noto Sans Myanmar",sans-serif;
+  touch-action:pan-y;
+}
+#world{position:fixed;inset:0;width:100%;height:100%;display:block}
+#loading{
+  position:fixed;inset:0;z-index:50;
+  display:flex;align-items:center;justify-content:center;
+  flex-direction:column;gap:12px;
+  background:#031b32;color:#9beeff;
+  letter-spacing:2px;font-size:13px;
+  transition:opacity .7s;
+}
+#loading.hide{opacity:0;pointer-events:none}
+.loader{
+  width:42px;height:42px;border:3px solid #ffffff20;
+  border-top-color:#43eaff;border-radius:50%;
+  animation:spin 1s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.ui{
+  position:fixed;inset:0;z-index:5;
+  display:flex;flex-direction:column;
+  justify-content:space-between;
+  padding:calc(13px + env(safe-area-inset-top)) 13px calc(12px + env(safe-area-inset-bottom));
+  pointer-events:none;
+}
+.top{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:8px;
+}
+.brand{
+  font-weight:1000;font-size:22px;letter-spacing:2px;
+  color:#e9fdff;text-shadow:0 0 15px #00cfff;
+}
+.brand-sub{font-size:10px;color:#a4e7f5;letter-spacing:1px;margin-top:3px}
+.stats{display:flex;gap:6px}
+.stat{
+  min-width:76px;text-align:center;padding:8px 9px;
+  background:#031e35b9;border:1px solid #60e8ff55;
+  border-radius:13px;backdrop-filter:blur(12px);
+  box-shadow:0 0 15px #00bfff16;
+}
+.stat small{display:block;font-size:9px;color:#a9e8f4}
+.stat strong{display:block;font-size:17px;margin-top:3px;color:#fff}
+.bottom{pointer-events:auto;display:flex;flex-direction:column;gap:8px}
+.greeting{
+  align-self:center;text-align:center;
+  padding:7px 13px;border:1px solid #8befff44;
+  background:#04243bbd;border-radius:30px;
+  color:#d7faff;font-size:11px;
+  backdrop-filter:blur(8px);
+}
+.panel{
+  background:linear-gradient(145deg,#062d49ed,#031a30ed);
+  border:1px solid #59dfff66;border-radius:18px;
+  padding:12px;backdrop-filter:blur(14px);
+  box-shadow:0 8px 28px #00101f66,0 0 20px #00bfff12;
+}
+.panel-head{
+  display:flex;justify-content:space-between;align-items:center;
+  color:#9cecff;font-size:12px;font-weight:800;
+  letter-spacing:.4px;margin-bottom:9px;
+}
+.small-note{font-size:10px;color:#a6dce9;font-weight:400}
+.actions{display:flex;gap:8px}
+button{
+  font-family:inherit;color:#fff;border:0;cursor:pointer;
+  font-weight:800;border-radius:12px;
+  -webkit-tap-highlight-color:transparent;
+}
+button:active{transform:scale(.97)}
+#feedBtn{
+  flex:1;padding:13px 10px;
+  background:linear-gradient(110deg,#00bfe9,#0874c7);
+  box-shadow:0 4px 18px #00bfff38;
+  font-size:14px;
+}
+#soundBtn,#viewBtn{
+  width:48px;background:#10405b;
+  border:1px solid #55dcff66;font-size:19px;
+}
+#volumeRow{
+  display:flex;align-items:center;gap:8px;
+  font-size:10px;color:#b6e8f4;margin-top:9px;
+}
+#volume{flex:1;accent-color:#20d7ff}
+.packages{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.package{
+  border:1px solid #49d9ff55;
+  border-radius:12px;padding:9px 4px;
+  text-align:center;background:#0b3a55;
+}
+.package b{font-size:13px;display:block}
+.package span{font-size:10px;color:#9deaff;display:block;margin-top:3px}
+.package button{
+  width:100%;margin-top:7px;padding:7px 2px;
+  font-size:10px;background:#087db4;
+}
+.reward-line{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:11px;color:#c7eff7;margin-top:9px;
+}
+#toast{
+  position:fixed;z-index:30;left:50%;top:45%;
+  transform:translate(-50%,-50%);
+  background:#052b43ee;border:1px solid #65eaff;
+  border-radius:14px;padding:13px 17px;
+  color:#fff;text-align:center;font-size:13px;
+  width:max-content;max-width:85%;display:none;
+  box-shadow:0 0 30px #00cfff33;
+}
+#hint{
+  position:fixed;z-index:4;left:50%;top:54%;
+  transform:translate(-50%,-50%);
+  color:#d8faff;font-size:11px;
+  text-align:center;text-shadow:0 1px 8px #001522;
+  background:#062c4380;padding:7px 12px;
+  border-radius:20px;pointer-events:none;
+  opacity:.8;transition:opacity 1s;
+}
+@media(max-height:690px){
+ .ui{padding-top:8px;padding-bottom:8px}
+ .brand{font-size:18px}
+ .panel{padding:9px}
+ #feedBtn{padding:10px}
+ .package{padding:7px 3px}
+ .bottom{gap:6px}
+}
+</style>
 </head>
 
 <body>
 <canvas id="world"></canvas>
 
-<div id="loading">LOADING UNDERWATER WORLD…</div>
-<div id="message"></div>
+<div id="loading">
+  <div class="loader"></div>
+  <div>ရေအောက်ကမ္ဘာကို ပြင်ဆင်နေသည်...</div>
+</div>
 
-<div class="overlay">
+<div id="hint">ရေမျက်နှာပြင်ကို ထိကြည့်ပါ 🫧</div>
+<div id="toast"></div>
+
+<div class="ui">
   <div class="top">
     <div>
       <div class="brand">LUCKY OCEAN</div>
-      <div class="subtitle">YOUR LITTLE UNDERWATER WORLD</div>
+      <div class="brand-sub">မင်းရဲ့ ကိုယ်ပိုင် ရေအောက်ကမ္ဘာလေး</div>
     </div>
+
     <div class="stats">
       <div class="stat">
-        <small>FOOD BALANCE</small>
+        <small>အစာလက်ကျန်</small>
         <strong id="foodBalance">20</strong>
       </div>
       <div class="stat">
-        <small>MY FISH</small>
-        <strong id="fishCount">2</strong>
+        <small>ပုလဲအမှတ်</small>
+        <strong id="pearlBalance">0</strong>
       </div>
     </div>
   </div>
 
   <div class="bottom">
-    <div class="status" id="worldStatus">WELCOME TO YOUR OCEAN</div>
+    <div class="greeting" id="greeting">
+      🐠 ရေအောက်ကမ္ဘာမှ ကြိုဆိုပါတယ်
+    </div>
 
     <div class="panel">
-      <div class="panel-title">OCEAN CARE</div>
-      <div class="actions">
-        <button id="feedBtn">🐟 FEED FISH</button>
-        <button id="soundBtn">🔊</button>
+      <div class="panel-head">
+        <span>🐟 ငါးလေးတွေကို စောင့်ရှောက်မယ်</span>
+        <span class="small-note" id="fishCount">ငါး ၁၂ ကောင်</span>
       </div>
-      <div class="sound-row">
-        <span>VOLUME</span>
+
+      <div class="actions">
+        <button id="feedBtn">🍤 ငါးလေးတွေကို အစာကျွေးမယ်</button>
+        <button id="soundBtn" aria-label="အသံ">🔊</button>
+        <button id="viewBtn" aria-label="ကြည့်ရှုရန်">👁️</button>
+      </div>
+
+      <div id="volumeRow">
+        <span>အသံအတိုးအကျယ်</span>
         <input id="volume" type="range" min="0" max="100" value="35">
-        <span id="volumeValue">35%</span>
+        <span id="volumeValue">၃၅%</span>
+      </div>
+
+      <div class="reward-line">
+        <span>💎 အစာကျွေးတိုင်း ပုလဲအမှတ် +၁</span>
+        <span id="rewardText">ကျေးဇူးတင်ပါတယ်</span>
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-title">GET MORE FISH FOOD</div>
+      <div class="panel-head">
+        <span>🍤 အစာထပ်ဖြည့်ရန်</span>
+        <span class="small-note">အစာအထုပ်များ</span>
+      </div>
+
       <div class="packages">
         <div class="package">
-          <strong>1,000 MMK</strong>
-          <span>10 FOOD</span>
-          <button data-food="10" data-price="1000">SELECT</button>
+          <b>၁,၀၀၀ ကျပ်</b>
+          <span>အစာ ၁၀ ကြိမ်</span>
+          <button data-food="10" data-price="1000">ရွေးချယ်မယ်</button>
         </div>
         <div class="package">
-          <strong>3,000 MMK</strong>
-          <span>35 FOOD</span>
-          <button data-food="35" data-price="3000">SELECT</button>
+          <b>၃,၀၀၀ ကျပ်</b>
+          <span>အစာ ၃၅ ကြိမ်</span>
+          <button data-food="35" data-price="3000">ရွေးချယ်မယ်</button>
         </div>
         <div class="package">
-          <strong>5,000 MMK</strong>
-          <span>60 FOOD</span>
-          <button data-food="60" data-price="5000">SELECT</button>
+          <b>၅,၀၀၀ ကျပ်</b>
+          <span>အစာ ၆၀ ကြိမ်</span>
+          <button data-food="60" data-price="5000">ရွေးချယ်မယ်</button>
         </div>
       </div>
     </div>
@@ -119,497 +238,756 @@ button{border:0;border-radius:12px;padding:13px 15px;font-weight:800;color:white
 
 <script type="module">
 import * as THREE from 'three';
-import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+import { GLTFLoader } from
+'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
 
 const canvas = document.getElementById('world');
 const loading = document.getElementById('loading');
-const statusText = document.getElementById('worldStatus');
-const message = document.getElementById('message');
+const toast = document.getElementById('toast');
 
 let scene, camera, renderer, clock;
-let fish = [];
-let bubbles = [];
-let foodPellets = [];
-let plants = [];
-let soundOn = true;
-let volume = 0.35;
+let fish = [], bubbles = [], plants = [], foodPellets = [];
+let mixers = [];
+let soundOn = true, volume = .35;
 let audioContext = null;
-let foodBalance = Number(localStorage.getItem('luckyOceanFood') || 20);
 let feeding = false;
+let touchPoint = null;
+let touchStart = 0;
+let fishCount = 12;
 
-document.getElementById('foodBalance').textContent = foodBalance;
+let foodBalance = Number(localStorage.getItem('luckyOceanFood') ?? 20);
+let pearlBalance = Number(localStorage.getItem('luckyOceanPearls') ?? 0);
 
-function showMessage(text){
-  message.textContent = text;
-  message.style.display = 'block';
-  setTimeout(()=>message.style.display='none',2300);
+const foodEl = document.getElementById('foodBalance');
+const pearlEl = document.getElementById('pearlBalance');
+
+function burmeseNumber(n){
+  return String(n).replace(/[0-9]/g,d=>'၀၁၂၃၄၅၆၇၈၉'[Number(d)]);
 }
 
-function updateFood(){
-  document.getElementById('foodBalance').textContent = foodBalance;
+function showToast(text){
+  toast.textContent=text;
+  toast.style.display='block';
+  clearTimeout(showToast.timer);
+  showToast.timer=setTimeout(()=>toast.style.display='none',2600);
+}
+
+function updateBalances(){
+  foodEl.textContent=burmeseNumber(foodBalance);
+  pearlEl.textContent=burmeseNumber(pearlBalance);
   localStorage.setItem('luckyOceanFood',String(foodBalance));
+  localStorage.setItem('luckyOceanPearls',String(pearlBalance));
 }
+
+updateBalances();
 
 function init(){
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x031b31);
-  scene.fog = new THREE.FogExp2(0x06334c,0.027);
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x031c35);
+  scene.fog=new THREE.FogExp2(0x07354c,.019);
 
-  camera = new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,150);
-  camera.position.set(0,5,17);
-  camera.lookAt(0,2,0);
+  camera=new THREE.PerspectiveCamera(52,innerWidth/innerHeight,.1,120);
+  camera.position.set(0,5,19);
+  camera.lookAt(0,2,-1);
 
-  renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+  renderer=new THREE.WebGLRenderer({
+    canvas,antialias:true,alpha:false,powerPreference:'high-performance'
+  });
   renderer.setSize(innerWidth,innerHeight);
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.25;
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.25;
 
-  clock = new THREE.Clock();
+  clock=new THREE.Clock();
 
-  const ambient = new THREE.AmbientLight(0x77cfff,1.5);
-  scene.add(ambient);
+  scene.add(new THREE.HemisphereLight(0x9cecff,0x092b39,2.1));
 
-  const blueLight = new THREE.PointLight(0x1caeff,35,45);
-  blueLight.position.set(-7,8,5);
-  scene.add(blueLight);
+  const sun=new THREE.DirectionalLight(0x9eeeff,2.2);
+  sun.position.set(-7,13,7);
+  scene.add(sun);
 
-  const cyanLight = new THREE.PointLight(0x00ffd5,22,30);
-  cyanLight.position.set(8,3,-5);
-  scene.add(cyanLight);
+  const cyan=new THREE.PointLight(0x00dfff,35,38);
+  cyan.position.set(5,5,-5);
+  scene.add(cyan);
 
-  createOceanFloor();
-  createRocks();
-  createRuins();
-  createCorals();
-  createPlants();
-  createSunRays();
-  createBubbles(85);
+  const purple=new THREE.PointLight(0x795cff,18,28);
+  purple.position.set(-8,1,-8);
+  scene.add(purple);
 
-  loadFish('./jikin-goldfish%20%281%29.glb','Jikin Goldfish',-3,3.1,0.5,1.45);
-  loadFish('./betta-splendens%20%281%29.glb','Pearl Blue Betta',3,2.5,-1,1.15);
+  makeFloor();
+  makeRocks();
+  makeCity();
+  makeCorals();
+  makeSeaPlants();
+  makeLightRays();
+  makeBubbles(75);
+  makeFishSchool();
 
-  window.addEventListener('resize',onResize);
+  // မူလ GLB မော်ဒယ်နှစ်ခုကိုလည်း ထည့်သုံးမယ်
+  loadFeaturedFish(
+    './jikin-goldfish%20%281%29.glb',
+    'ဂျပန်ရွှေငါး',
+    -3,3,0,1.35
+  );
+  loadFeaturedFish(
+    './betta-splendens%20%281%29.glb',
+    'အပြာရောင်တိုက်ငါး',
+    3,2.5,-1,1.1
+  );
+
+  window.addEventListener('resize',resize);
+  canvas.addEventListener('pointerdown',onGlassTouch);
+  document.addEventListener('visibilitychange',()=>{
+    if(!document.hidden && renderer) renderer.setSize(innerWidth,innerHeight);
+  });
+
   animate();
 
   setTimeout(()=>{
     loading.classList.add('hide');
-    statusText.textContent='YOUR UNDERWATER WORLD IS READY';
-  },1200);
+    document.getElementById('greeting').textContent=
+      '🐠 ငါးလေးတွေ အေးအေးဆေးဆေး ကူးခတ်နေကြပါတယ်';
+  },1500);
 }
 
-function createOceanFloor(){
-  const geo = new THREE.PlaneGeometry(100,100,30,30);
-  const mat = new THREE.MeshStandardMaterial({color:0x123e49,roughness:1});
-  const floor = new THREE.Mesh(geo,mat);
-  floor.rotation.x=-Math.PI/2;
-  floor.position.y=-1.2;
-  scene.add(floor);
-
-  const sand = new THREE.Mesh(
-    new THREE.CircleGeometry(35,64),
-    new THREE.MeshStandardMaterial({color:0x174957,roughness:1})
+/* ရေအောက်သဲပြင် */
+function makeFloor(){
+  const floor=new THREE.Mesh(
+    new THREE.PlaneGeometry(100,100,32,32),
+    new THREE.MeshStandardMaterial({color:0x174653,roughness:1})
   );
-  sand.rotation.x=-Math.PI/2;
-  sand.position.y=-1.17;
-  scene.add(sand);
+  floor.rotation.x=-Math.PI/2;
+  floor.position.y=-1.3;
+  scene.add(floor);
 }
 
-function createRocks(){
-  for(let i=0;i<28;i++){
-    const radius=0.35+Math.random()*1.15;
-    const geo=new THREE.DodecahedronGeometry(radius,1);
-    const mat=new THREE.MeshStandardMaterial({
-      color:new THREE.Color().setHSL(0.52+Math.random()*0.08,0.35,0.16+Math.random()*0.12),
-      roughness:1
-    });
-    const rock=new THREE.Mesh(geo,mat);
-    rock.position.set((Math.random()-0.5)*27,-0.7+Math.random()*0.5,-7+Math.random()*-4);
-    rock.scale.y=0.55+Math.random()*0.7;
+/* ကျောက်တောင်များ */
+function makeRocks(){
+  for(let i=0;i<32;i++){
+    const r=.4+Math.random()*1.2;
+    const rock=new THREE.Mesh(
+      new THREE.DodecahedronGeometry(r,1),
+      new THREE.MeshStandardMaterial({
+        color:new THREE.Color().setHSL(.52+Math.random()*.06,.34,.14+Math.random()*.1),
+        roughness:1
+      })
+    );
+    rock.position.set((Math.random()-.5)*28,-.85,-5-Math.random()*10);
+    rock.scale.y=.5+Math.random()*.8;
     scene.add(rock);
   }
 }
 
-function createRuins(){
-  const stoneMat=new THREE.MeshStandardMaterial({color:0x285866,roughness:0.9});
-  const glowMat=new THREE.MeshStandardMaterial({
-    color:0x126c79,emissive:0x087b91,emissiveIntensity:0.45,roughness:0.7
+/* ရေအောက်မြို့ဟောင်း */
+function makeCity(){
+  const stone=new THREE.MeshStandardMaterial({
+    color:0x285967,roughness:.85,metalness:.12
+  });
+  const glow=new THREE.MeshStandardMaterial({
+    color:0x147b91,emissive:0x075d78,emissiveIntensity:.65
   });
 
-  function pillar(x,z,height){
-    const base=new THREE.Mesh(new THREE.CylinderGeometry(.55,.7,.35,12),stoneMat);
-    base.position.set(x,-0.65,z);
-    scene.add(base);
+  for(let i=0;i<8;i++){
+    const x=(i-3.5)*2.7;
+    const h=3+Math.random()*3;
 
-    const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.32,.42,height,12),stoneMat);
-    shaft.position.set(x,-0.45+height/2,z);
-    scene.add(shaft);
+    const pillar=new THREE.Mesh(
+      new THREE.CylinderGeometry(.3,.45,h,12),stone
+    );
+    pillar.position.set(x,h/2-1,-12);
+    scene.add(pillar);
 
-    const top=new THREE.Mesh(new THREE.BoxGeometry(1.05,.3,1.05),glowMat);
-    top.position.set(x,height-0.45,z);
-    scene.add(top);
+    const cap=new THREE.Mesh(
+      new THREE.BoxGeometry(.9,.25,.9),glow
+    );
+    cap.position.set(x,h-1,-12);
+    scene.add(cap);
   }
 
-  pillar(-8,-8,5.2);
-  pillar(-5,-9,4.5);
-  pillar(6,-9,4.8);
-  pillar(9,-8,5.5);
+  // အလယ်နန်းတော်
+  const palace=new THREE.Group();
+  const base=new THREE.Mesh(
+    new THREE.BoxGeometry(5,2,1.3),stone
+  );
+  base.position.y=0;
+  palace.add(base);
+
+  for(let i=0;i<3;i++){
+    const tower=new THREE.Mesh(
+      new THREE.CylinderGeometry(.35,.55,4,10),stone
+    );
+    tower.position.set((i-1)*1.6,2.5,0);
+    palace.add(tower);
+
+    const tip=new THREE.Mesh(
+      new THREE.ConeGeometry(.5,1.1,8),glow
+    );
+    tip.position.set((i-1)*1.6,5.05,0);
+    palace.add(tip);
+  }
+
+  palace.position.set(0,-.4,-14);
+  scene.add(palace);
 
   const arch=new THREE.Mesh(
-    new THREE.TorusGeometry(2.5,.25,10,32,Math.PI),
-    stoneMat
+    new THREE.TorusGeometry(2.2,.22,10,32,Math.PI),
+    stone
   );
-  arch.position.set(0,2,-10);
+  arch.position.set(-8,1,-10);
   scene.add(arch);
 
   const arch2=arch.clone();
-  arch2.scale.set(1.35,1.1,1);
-  arch2.position.set(-10,2,-13);
+  arch2.position.set(8,1,-10);
   scene.add(arch2);
 }
 
-function createCorals(){
-  const colors=[0xff5b8d,0xffa45b,0x8e75ff,0x29e0c1,0xffd166];
+/* သန္တာကျောက်တန်း */
+function makeCorals(){
+  const colors=[0xff5b91,0xffa45b,0x9d7aff,0x31e0c2,0xffd36d];
 
-  for(let i=0;i<22;i++){
+  for(let i=0;i<28;i++){
     const group=new THREE.Group();
     const color=colors[i%colors.length];
-    const material=new THREE.MeshStandardMaterial({
-      color,emissive:color,emissiveIntensity:0.17,roughness:.65
+    const mat=new THREE.MeshStandardMaterial({
+      color,emissive:color,emissiveIntensity:.2,roughness:.55
     });
 
-    const height=.5+Math.random()*1.2;
     for(let j=0;j<4;j++){
+      const height=.6+Math.random()*1.2;
       const branch=new THREE.Mesh(
-        new THREE.CylinderGeometry(.035,.12,height,7),
-        material
+        new THREE.CylinderGeometry(.035,.13,height,7),mat
       );
-      branch.position.set((Math.random()-.5)*.4,height*.35,0);
-      branch.rotation.z=(Math.random()-.5)*.9;
+      branch.position.set((Math.random()-.5)*.45,height*.35,0);
+      branch.rotation.z=(Math.random()-.5)*.8;
       group.add(branch);
 
-      const tip=new THREE.Mesh(new THREE.SphereGeometry(.09,8,8),material);
-      tip.position.copy(branch.position);
-      tip.y+=height*.48;
+      const tip=new THREE.Mesh(new THREE.SphereGeometry(.09,8,8),mat);
+      tip.position.set(branch.position.x,height*.85,0);
       group.add(tip);
     }
 
-    group.position.set((Math.random()-.5)*23,-.9,-3-Math.random()*7);
+    group.position.set((Math.random()-.5)*25,-1,-3-Math.random()*9);
     scene.add(group);
   }
 }
 
-function createPlants(){
-  for(let i=0;i<18;i++){
+/* လှုပ်ရှားနေတဲ့ ရေအပင်များ */
+function makeSeaPlants(){
+  for(let i=0;i<20;i++){
     const group=new THREE.Group();
     const mat=new THREE.MeshStandardMaterial({
-      color:i%2?0x16a58d:0x287e8d,
-      roughness:.8,
-      side:THREE.DoubleSide
+      color:i%2?0x16a58d:0x267d92,
+      side:THREE.DoubleSide,roughness:.8
     });
 
     for(let j=0;j<3;j++){
-      const leaf=new THREE.Mesh(new THREE.ConeGeometry(.22,2+Math.random()*1.5,7),mat);
+      const leaf=new THREE.Mesh(
+        new THREE.ConeGeometry(.18,2+Math.random()*1.5,7),mat
+      );
       leaf.position.set((j-1)*.25,1,0);
       leaf.rotation.z=(j-1)*.25;
       group.add(leaf);
     }
 
-    group.position.set((Math.random()-.5)*24,-1,-2-Math.random()*7);
+    group.position.set((Math.random()-.5)*25,-1,-2-Math.random()*9);
     group.userData.phase=Math.random()*6;
     scene.add(group);
     plants.push(group);
   }
 }
 
-function createSunRays(){
-  const rayMat=new THREE.MeshBasicMaterial({
-    color:0x70dfff,transparent:true,opacity:.055,side:THREE.DoubleSide,
-    depthWrite:false
+/* ရေထဲဖြတ်ဝင်လာတဲ့ နေရောင် */
+function makeLightRays(){
+  const material=new THREE.MeshBasicMaterial({
+    color:0x8beaff,transparent:true,opacity:.045,
+    side:THREE.DoubleSide,depthWrite:false
   });
 
-  for(let i=0;i<7;i++){
-    const ray=new THREE.Mesh(new THREE.PlaneGeometry(1.1,17),rayMat);
-    ray.position.set(-8+i*2.7,5,-5);
-    ray.rotation.z=(Math.random()-.5)*.18;
+  for(let i=0;i<9;i++){
+    const ray=new THREE.Mesh(
+      new THREE.PlaneGeometry(1.4,19),material
+    );
+    ray.position.set(-10+i*2.5,5,-7);
+    ray.rotation.z=(Math.random()-.5)*.15;
     scene.add(ray);
   }
 }
 
-function createBubbles(count){
-  const geo=new THREE.SphereGeometry(.045,8,8);
-  const mat=new THREE.MeshBasicMaterial({color:0x9ceeff,transparent:true,opacity:.55});
+/* ပူဖောင်းများ */
+function makeBubbles(count){
+  const geometry=new THREE.SphereGeometry(.045,8,8);
+  const material=new THREE.MeshBasicMaterial({
+    color:0xa5f1ff,transparent:true,opacity:.55
+  });
 
   for(let i=0;i<count;i++){
-    const bubble=new THREE.Mesh(geo,mat);
-    bubble.position.set((Math.random()-.5)*25,Math.random()*9-1,(Math.random()-.5)*12-3);
-    bubble.scale.setScalar(.5+Math.random()*1.5);
-    bubble.userData.speed=.3+Math.random()*.8;
-    bubble.userData.offset=Math.random()*6;
+    const bubble=new THREE.Mesh(geometry,material);
+    bubble.position.set(
+      (Math.random()-.5)*25,
+      Math.random()*10-1,
+      (Math.random()-.5)*12-5
+    );
+    bubble.scale.setScalar(.5+Math.random()*1.6);
+    bubble.userData.speed=.25+Math.random()*.8;
+    bubble.userData.phase=Math.random()*6;
     scene.add(bubble);
     bubbles.push(bubble);
   }
 }
 
-function createFallbackFish(color,accent){
+/* Procedural 3D ငါးတစ်ကောင် */
+function createFishModel(color,accent,size=1,glow=false){
   const group=new THREE.Group();
 
-  const bodyMat=new THREE.MeshStandardMaterial({
-    color,metalness:.25,roughness:.28
+  const bodyMaterial=new THREE.MeshStandardMaterial({
+    color,metalness:.22,roughness:.3,
+    emissive:glow?color:0x000000,
+    emissiveIntensity:glow?.18:0
   });
-  const accentMat=new THREE.MeshStandardMaterial({
-    color:accent,metalness:.3,roughness:.3
+  const finMaterial=new THREE.MeshStandardMaterial({
+    color:accent,metalness:.25,roughness:.3,
+    emissive:glow?accent:0x000000,
+    emissiveIntensity:glow?.35:0,
+    side:THREE.DoubleSide
   });
 
-  const body=new THREE.Mesh(new THREE.SphereGeometry(.75,24,18),bodyMat);
+  const body=new THREE.Mesh(
+    new THREE.SphereGeometry(.62,20,16),bodyMaterial
+  );
   body.scale.set(1.35,.72,.65);
   group.add(body);
 
-  const tail=new THREE.Mesh(new THREE.ConeGeometry(.55,.95,4),accentMat);
-  tail.rotation.z=-Math.PI/2;
-  tail.position.x=-1.25;
-  group.add(tail);
+  const tailPivot=new THREE.Group();
+  tailPivot.position.x=-.78;
+  group.add(tailPivot);
 
-  const fin=new THREE.Mesh(new THREE.ConeGeometry(.35,.75,5),accentMat);
-  fin.position.set(-.15,.65,0);
-  fin.rotation.z=.3;
-  group.add(fin);
+  const tail=new THREE.Mesh(
+    new THREE.BufferGeometry(),
+    finMaterial
+  );
+  const shape=new THREE.Shape();
+  shape.moveTo(0,0);
+  shape.quadraticCurveTo(-.55,.55,-1.05,.65);
+  shape.quadraticCurveTo(-.8,0,-1.05,-.65);
+  shape.quadraticCurveTo(-.55,-.55,0,0);
+  tail.geometry=new THREE.ShapeGeometry(shape);
+  tail.position.x=-.08;
+  tailPivot.add(tail);
 
-  const eyeMat=new THREE.MeshBasicMaterial({color:0x050b16});
-  const eye=new THREE.Mesh(new THREE.SphereGeometry(.075,10,10),eyeMat);
-  eye.position.set(.72,.18,.42);
+  const topFin=new THREE.Mesh(
+    new THREE.ConeGeometry(.23,.65,5),finMaterial
+  );
+  topFin.position.set(-.15,.57,0);
+  topFin.rotation.z=.3;
+  group.add(topFin);
+
+  const bottomFin=new THREE.Mesh(
+    new THREE.ConeGeometry(.18,.45,5),finMaterial
+  );
+  bottomFin.position.set(-.1,-.5,0);
+  bottomFin.rotation.z=Math.PI-.2;
+  group.add(bottomFin);
+
+  const eyeMat=new THREE.MeshBasicMaterial({color:0x071321});
+  const eye=new THREE.Mesh(new THREE.SphereGeometry(.055,8,8),eyeMat);
+  eye.position.set(.67,.16,.39);
   group.add(eye);
 
+  const eye2=eye.clone();
+  eye2.position.z=-.39;
+  group.add(eye2);
+
+  group.scale.setScalar(size);
+  group.userData.tail=tailPivot;
   return group;
 }
 
-function loadFish(url,name,x,y,z,scale){
+/* သဘာဝ + စိတ်ကူးယဉ် ငါးအုပ် */
+function makeFishSchool(){
+  const natural=[
+    [0xff873d,0xffd7a0],
+    [0x168cce,0xffe1a1],
+    [0xffd54a,0x168cce],
+    [0xf5f1e8,0xef5c62],
+    [0x26c6a5,0xffe4a1],
+    [0x7559e8,0x42dfff]
+  ];
+
+  const fantasy=[
+    [0x654bff,0x48edff],
+    [0x00bca9,0xc5ffff],
+    [0xd34bff,0x6afaff],
+    [0x176dff,0xff5cdb],
+    [0x5affd1,0x5a8dff],
+    [0xff8bd6,0x8bffff]
+  ];
+
+  for(let i=0;i<10;i++){
+    const palette=i<6?natural[i]:fantasy[i-6];
+    const size=.48+Math.random()*.3;
+    const model=createFishModel(
+      palette[0],palette[1],size,i>=6
+    );
+
+    const x=(Math.random()-.5)*15;
+    const y=.5+Math.random()*4;
+    const z=-1-Math.random()*7;
+
+    model.position.set(x,y,z);
+    scene.add(model);
+
+    fish.push({
+      object:model,
+      x,y,z,
+      phase:Math.random()*Math.PI*2,
+      speed:.5+Math.random()*.55,
+      targetX:x,targetY:y,
+      turn:Math.random()*5,
+      state:'swim',
+      fear:0,
+      food:false,
+      mixer:null
+    });
+  }
+}
+
+/* မူလ GLB ငါးမော်ဒယ်များ */
+function loadFeaturedFish(url,name,x,y,z,scale){
   const loader=new GLTFLoader();
 
-  loader.load(
-    url,
-    (gltf)=>{
-      const model=gltf.scene;
-      model.scale.setScalar(scale);
-      model.position.set(x,y,z);
-      model.traverse(obj=>{
-        if(obj.isMesh){
-          obj.castShadow=false;
-          obj.receiveShadow=false;
-        }
-      });
-      scene.add(model);
+  loader.load(url,gltf=>{
+    const model=gltf.scene;
 
-      fish.push({
-        object:model,
-        name,
-        baseX:x,baseY:y,baseZ:z,
-        phase:Math.random()*6,
-        speed:.45+Math.random()*.3,
-        mixer:gltf.animations.length?new THREE.AnimationMixer(model):null,
-        foodTarget:null,
-        fallback:false
-      });
+    const box=new THREE.Box3().setFromObject(model);
+    const size=box.getSize(new THREE.Vector3());
+    const max=Math.max(size.x,size.y,size.z)||1;
+    model.scale.setScalar(scale*2/max);
 
-      if(gltf.animations.length){
-        const mixer=new THREE.AnimationMixer(model);
-        gltf.animations.forEach(clip=>mixer.clipAction(clip).play());
-        fish[fish.length-1].mixer=mixer;
+    const center=box.getCenter(new THREE.Vector3());
+    model.position.set(
+      x-center.x*model.scale.x,
+      y-center.y*model.scale.y,
+      z-center.z*model.scale.z
+    );
+
+    model.traverse(obj=>{
+      if(obj.isMesh){
+        obj.castShadow=false;
+        obj.receiveShadow=false;
       }
+    });
 
-      updateFishCount();
-    },
-    undefined,
-    (error)=>{
-      console.warn('Could not load fish model:',name,error);
-      const fallback=createFallbackFish(
-        name==='Jikin Goldfish'?0xe9e9e9:0x176bff,
-        name==='Jikin Goldfish'?0xe83b46:0x6c38ff
-      );
-      fallback.position.set(x,y,z);
-      fallback.scale.setScalar(scale);
-      scene.add(fallback);
+    scene.add(model);
 
-      fish.push({
-        object:fallback,name,
-        baseX:x,baseY:y,baseZ:z,
-        phase:Math.random()*6,
-        speed:.45+Math.random()*.3,
-        mixer:null,
-        foodTarget:null,
-        fallback:true
-      });
-      updateFishCount();
+    let mixer=null;
+    if(gltf.animations.length){
+      mixer=new THREE.AnimationMixer(model);
+      gltf.animations.forEach(clip=>mixer.clipAction(clip).play());
+      mixers.push(mixer);
     }
-  );
+
+    fish.push({
+      object:model,x,y,z,
+      phase:Math.random()*6,
+      speed:.45,
+      targetX:x,targetY:y,
+      turn:Math.random()*5,
+      state:'swim',
+      fear:0,
+      food:false,
+      mixer,
+      name
+    });
+
+    updateFishCount();
+  },undefined,error=>{
+    console.warn('GLB မော်ဒယ်မတက်ပါ:',name,error);
+  });
 }
 
-function updateFishCount(){
-  document.getElementById('fishCount').textContent=fish.length;
-}
-
+/* အစာအမှုန်များ */
 function dropFood(){
-  const geo=new THREE.SphereGeometry(.09,8,8);
-  const mat=new THREE.MeshStandardMaterial({
-    color:0xffd36a,emissive:0x8a4b08,emissiveIntensity:.3
+  const geometry=new THREE.SphereGeometry(.075,8,8);
+  const material=new THREE.MeshStandardMaterial({
+    color:0xffd36a,emissive:0x80500c,emissiveIntensity:.25
   });
 
-  for(let i=0;i<7;i++){
-    const pellet=new THREE.Mesh(geo,mat);
-    pellet.position.set((Math.random()-.5)*2,7+Math.random()*1.5,(Math.random()-.5)*2);
-    pellet.userData.speed=1.1+Math.random()*.8;
+  for(let i=0;i<9;i++){
+    const pellet=new THREE.Mesh(geometry,material);
+    pellet.position.set(
+      (Math.random()-.5)*2,
+      6+Math.random()*2,
+      (Math.random()-.5)*2
+    );
+    pellet.userData.speed=.8+Math.random()*.6;
     pellet.userData.life=9;
     scene.add(pellet);
     foodPellets.push(pellet);
   }
 
-  fish.forEach(f=>f.foodTarget=true);
+  fish.forEach(f=>f.food=true);
 }
 
-function playTone(freq=550,duration=.12){
+/* လူက မှန်နားလာကြည့်တဲ့ တုံ့ပြန်မှု */
+const raycaster=new THREE.Raycaster();
+const plane=new THREE.Plane(new THREE.Vector3(0,0,1),0);
+
+function onGlassTouch(event){
+  const rect=canvas.getBoundingClientRect();
+  const pointer=new THREE.Vector2(
+    ((event.clientX-rect.left)/rect.width)*2-1,
+    -((event.clientY-rect.top)/rect.height)*2+1
+  );
+
+  raycaster.setFromCamera(pointer,camera);
+  const point=new THREE.Vector3();
+
+  if(raycaster.ray.intersectPlane(plane,point)){
+    touchPoint=point;
+    touchStart=clock.elapsedTime;
+
+    fish.forEach(f=>{
+      const distance=Math.hypot(
+        f.object.position.x-point.x,
+        f.object.position.y-point.y
+      );
+      if(distance<8){
+        f.state='curious';
+        f.fear=clock.elapsedTime+2.2;
+      }
+    });
+
+    document.getElementById('hint').style.opacity='0';
+    document.getElementById('greeting').textContent=
+      '👀 ငါးလေးတွေ မင်းကို လာကြည့်နေကြတယ်...';
+
+    setTimeout(()=>{
+      document.getElementById('greeting').textContent=
+        '🫧 ငါးလေးတွေ ပြန်ပြီး ကူးခတ်နေကြပါတယ်';
+    },3000);
+  }
+}
+
+/* အသံ */
+function tone(freq=520,duration=.12){
   if(!soundOn)return;
   try{
     audioContext=audioContext||new (window.AudioContext||window.webkitAudioContext)();
     const osc=audioContext.createOscillator();
     const gain=audioContext.createGain();
+
     osc.frequency.value=freq;
-    gain.gain.value=volume*.08;
+    gain.gain.value=volume*.07;
     osc.connect(gain);
     gain.connect(audioContext.destination);
+
     osc.start();
-    gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);
+    gain.gain.exponentialRampToValueAtTime(
+      .001,audioContext.currentTime+duration
+    );
     osc.stop(audioContext.currentTime+duration);
-  }catch(e){console.warn('Audio unavailable',e)}
+  }catch(e){
+    console.warn('အသံစနစ် မရနိုင်ပါ',e);
+  }
 }
 
-function animate(){
-  requestAnimationFrame(animate);
-  const delta=Math.min(clock.getDelta(),.05);
-  const t=clock.elapsedTime;
+/* ငါးများ၏ သဘာဝအတိုင်း လှုပ်ရှားမှု */
+function updateFish(delta,t){
+  fish.forEach((f,index)=>{
+    const obj=f.object;
+    let targetX=f.targetX;
+    let targetY=f.targetY;
 
-  fish.forEach((f,i)=>{
-    if(f.mixer)f.mixer.update(delta);
-
-    const targetX=f.foodTarget&&foodPellets.length
-      ?foodPellets[0].position.x
-      :f.baseX+Math.sin(t*f.speed+f.phase)*2.1;
-
-    const targetY=f.foodTarget&&foodPellets.length
-      ?Math.max(0,foodPellets[0].position.y-.5)
-      :f.baseY+Math.sin(t*1.2+f.phase)*.55;
-
-    f.object.position.x+=(targetX-f.object.position.x)*delta*.55;
-    f.object.position.y+=(targetY-f.object.position.y)*delta*.5;
-    f.object.position.z=f.baseZ+Math.sin(t*.7+f.phase)*.65;
-
-    const direction=targetX-f.object.position.x;
-    if(Math.abs(direction)>.08){
-      f.object.rotation.y=direction>0?0:Math.PI;
+    if(f.state==='curious' && touchPoint && t<f.fear){
+      targetX=touchPoint.x;
+      targetY=touchPoint.y;
+    }else if(f.state==='curious' && t>=f.fear){
+      f.state='flee';
+      f.fear=t+2.2;
     }
 
-    if(f.fallback){
-      f.object.rotation.z=Math.sin(t*3+f.phase)*.06;
-      if(f.object.children[1]){
-        f.object.children[1].rotation.y=Math.sin(t*8+f.phase)*.3;
+    if(f.state==='flee' && t<f.fear){
+      const dx=obj.position.x-(touchPoint?.x||0);
+      const dy=obj.position.y-(touchPoint?.y||0);
+      targetX=obj.position.x+Math.sign(dx||1)*4;
+      targetY=obj.position.y+Math.sign(dy||1)*2;
+    }else if(f.state==='flee' && t>=f.fear){
+      f.state='swim';
+      f.targetX=(Math.random()-.5)*14;
+      f.targetY=.6+Math.random()*4;
+    }
+
+    if(f.food && foodPellets.length){
+      const pellet=foodPellets[0];
+      targetX=pellet.position.x;
+      targetY=Math.max(.2,pellet.position.y-.3);
+    }else if(f.state==='swim'){
+      if(Math.random()<.008){
+        f.targetX=(Math.random()-.5)*15;
+        f.targetY=.5+Math.random()*4.5;
       }
     }
+
+    const dx=targetX-obj.position.x;
+    const dy=targetY-obj.position.y;
+
+    const pace=f.state==='flee'?3.6:
+      f.state==='curious'?1.5:
+      f.food?2.2:f.speed;
+
+    obj.position.x+=dx*delta*pace*.65;
+    obj.position.y+=dy*delta*pace*.55;
+    obj.position.z=f.z+Math.sin(t*f.speed+f.phase)*.55;
+
+    const direction=Math.abs(dx)>.06?Math.sign(dx):1;
+    obj.rotation.y=direction<0?Math.PI:0;
+    obj.rotation.z=Math.sin(t*2+f.phase)*.045;
+
+    if(obj.userData.tail){
+      obj.userData.tail.rotation.y=Math.sin(t*8+f.phase)*.48;
+    }
+
+    if(f.mixer)f.mixer.update(delta);
   });
+}
+
+/* အရာအားလုံးကို လှုပ်ရှားစေမယ် */
+function animate(){
+  requestAnimationFrame(animate);
+  const delta=Math.min(clock.getDelta(),.04);
+  const t=clock.elapsedTime;
+
+  updateFish(delta,t);
 
   bubbles.forEach(b=>{
     b.position.y+=b.userData.speed*delta;
-    b.position.x+=Math.sin(t+b.userData.offset)*delta*.12;
+    b.position.x+=Math.sin(t+b.userData.phase)*delta*.1;
     if(b.position.y>10){
-      b.position.y=-1.5;
+      b.position.y=-1;
       b.position.x=(Math.random()-.5)*25;
     }
   });
 
+  plants.forEach(p=>{
+    p.rotation.z=Math.sin(t*.8+p.userData.phase)*.055;
+  });
+
   foodPellets=foodPellets.filter(p=>{
     p.position.y-=p.userData.speed*delta;
-    p.position.x+=Math.sin(t*2+p.position.z)*delta*.15;
+    p.position.x+=Math.sin(t*2)*delta*.1;
     p.userData.life-=delta;
-    if(p.position.y<-.7||p.userData.life<=0){
+
+    if(p.position.y<-.8||p.userData.life<=0){
       scene.remove(p);
-      p.geometry.dispose();
       return false;
     }
     return true;
   });
 
   if(foodPellets.length===0){
-    fish.forEach(f=>f.foodTarget=false);
+    fish.forEach(f=>f.food=false);
     feeding=false;
   }
 
-  plants.forEach(p=>{
-    p.rotation.z=Math.sin(t*.8+p.userData.phase)*.055;
-  });
-
-  camera.position.x=Math.sin(t*.12)*.35;
-  camera.lookAt(0,2,0);
+  camera.position.x=Math.sin(t*.1)*.25;
+  camera.lookAt(0,2,-1);
 
   renderer.render(scene,camera);
 }
 
-function onResize(){
+function resize(){
+  if(!camera||!renderer)return;
   camera.aspect=innerWidth/innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(innerWidth,innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
 }
 
+/* အစာကျွေးခြင်း */
 document.getElementById('feedBtn').addEventListener('click',()=>{
   if(foodBalance<=0){
-    showMessage('Not enough food! Please get more food.');
-    playTone(220,.2);
+    showToast('အစာကုန်နေပါပြီ။ အစာထပ်ဖြည့်ပေးပါဦး 🐠');
+    tone(220,.2);
     return;
   }
   if(feeding)return;
 
   foodBalance--;
-  updateFood();
+  pearlBalance++;
+
+  updateBalances();
   feeding=true;
   dropFood();
-  playTone(620,.15);
-  statusText.textContent='YUMMY! YOUR FISH ARE EATING';
+  tone(620,.15);
+
+  document.getElementById('greeting').textContent=
+    '💙 ကျေးဇူးတင်ပါတယ်။ ငါးလေးတွေ ပျော်နေကြပြီ!';
+
+  document.getElementById('rewardText').textContent='ပုလဲ +၁ 💎';
+  showToast('ငါးလေးတွေကို အစာကျွေးပေးလို့ ကျေးဇူးတင်ပါတယ်။ ပုလဲအမှတ် +၁ ရပါပြီ 💎');
 });
 
+/* အသံဖွင့်ပိတ် */
 document.getElementById('soundBtn').addEventListener('click',()=>{
   soundOn=!soundOn;
   document.getElementById('soundBtn').textContent=soundOn?'🔊':'🔇';
-  if(soundOn)playTone(520,.12);
+  if(soundOn)tone(520,.12);
 });
 
+/* အသံအတိုးအကျယ် */
 document.getElementById('volume').addEventListener('input',e=>{
   volume=Number(e.target.value)/100;
-  document.getElementById('volumeValue').textContent=e.target.value+'%';
+  document.getElementById('volumeValue').textContent=
+    burmeseNumber(e.target.value)+'%';
 });
 
+/* အစာအထုပ် ရွေးချယ်ခြင်း */
 document.querySelectorAll('.package button').forEach(button=>{
   button.addEventListener('click',()=>{
     const amount=button.dataset.food;
-    const price=button.dataset.price;
-    showMessage(`Selected ${amount} FOOD — ${Number(price).toLocaleString()} MMK. Payment integration is not active yet.`);
+    const price=Number(button.dataset.price).toLocaleString('en-US');
+
+    showToast(
+      `${burmeseNumber(amount)} ကြိမ်စာ အစာအထုပ်ကို ရွေးထားပါတယ်။ ငွေပေးချေမှုစနစ် မချိတ်ဆက်ရသေးပါ။`
+    );
   });
 });
 
+/* ကြည့်ရှုရန် */
+document.getElementById('viewBtn').addEventListener('click',()=>{
+  showToast('ဖန်သားပြင်ကို ထိကြည့်ပါ။ ငါးလေးတွေ အနားလာကြည့်ပါလိမ့်မယ် 🐟');
+});
+
+/* Telegram Mini App */
+try{
+  const tg=window.Telegram?.WebApp;
+  if(tg){
+    tg.ready();
+    tg.expand();
+    tg.setHeaderColor('#031b32');
+    tg.setBackgroundColor('#031b32');
+  }
+}catch(e){
+  console.warn('Telegram WebApp မရနိုင်ပါ',e);
+}
+
+/* အမှားကို စစ်ဆေးခြင်း */
 window.addEventListener('error',e=>{
   console.error('App error:',e.message);
-  statusText.textContent='WORLD ERROR — CHECK CONNECTION';
+  document.getElementById('greeting').textContent=
+    'ကမ္ဘာဖွင့်ရာတွင် အမှားရှိနေပါတယ်။ ပြန်ဖွင့်ကြည့်ပါ။';
 });
 
 window.addEventListener('unhandledrejection',e=>{
   console.error('App promise error:',e.reason);
-  statusText.textContent='SOME 3D ASSETS COULD NOT LOAD';
 });
 
 try{
   init();
 }catch(error){
-  console.error('World initialization failed:',error);
-  loading.textContent='WORLD FAILED TO START';
-  statusText.textContent='PLEASE RELOAD THE APP';
+  console.error(error);
+  loading.innerHTML='ရေအောက်ကမ္ဘာ ဖွင့်မရပါ။ အင်တာနက်ကို စစ်ဆေးပြီး ပြန်ဖွင့်ပါ။';
 }
 </script>
 </body>
