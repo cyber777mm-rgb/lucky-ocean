@@ -14,240 +14,425 @@
 body {
   margin: 0;
   min-height: 100vh;
-  color: #fff;
+  color: #effbff;
   font-family: Arial, sans-serif;
   background:
-    radial-gradient(ellipse at 50% 0%, #174e78 0%, transparent 55%),
-    linear-gradient(180deg, #061d38, #020817 90%);
+    radial-gradient(ellipse at 50% -10%, #1d7394 0%, transparent 48%),
+    linear-gradient(180deg, #061d38, #020814 88%);
+  overflow-x: hidden;
 }
 
 .app {
   width: 100%;
-  max-width: 520px;
+  max-width: 560px;
   min-height: 100vh;
   margin: auto;
-  padding: 18px 14px 30px;
-  overflow: hidden;
+  padding: 16px 13px 32px;
 }
 
 .header {
   text-align: center;
-  padding: 10px 0 18px;
+  padding: 9px 0 17px;
 }
 
 .header h1 {
   margin: 0;
   letter-spacing: 5px;
-  font-size: 27px;
-  color: #9beaff;
-  text-shadow: 0 0 18px #28bfff;
+  font-size: clamp(25px, 7vw, 32px);
+  color: #b9f5ff;
+  text-shadow: 0 0 10px #42d9ff, 0 0 28px #12a9df;
 }
 
 .header p {
   margin: 7px 0 0;
-  color: #b7d9ed;
-  font-size: 12px;
-  letter-spacing: 2px;
+  color: #b6dce9;
+  font-size: 10px;
+  letter-spacing: 2.5px;
 }
 
 .balance {
   display: flex;
-  justify-content: space-between;
   gap: 10px;
-  margin-bottom: 12px;
+  margin-bottom: 13px;
 }
 
 .balance-card {
   flex: 1;
-  padding: 13px;
-  border: 1px solid #4ccfff55;
-  border-radius: 14px;
-  background: #092c49bb;
-  box-shadow: 0 0 18px #00bfff18;
+  padding: 12px 13px;
+  border: 1px solid #75e5ff45;
+  border-radius: 15px;
+  background: linear-gradient(145deg, #0d4261cc, #061d35dd);
+  box-shadow: 0 8px 24px #0004;
 }
 
 .balance-card small {
   display: block;
-  color: #9cc8dc;
+  color: #a9cfdf;
   margin-bottom: 6px;
+  font-size: 12px;
 }
 
 .balance-card strong {
-  color: #ffe28a;
-  font-size: 18px;
+  font-size: 20px;
+  color: #ffe29a;
+  text-shadow: 0 0 12px #ffce6244;
 }
+
+/* AQUARIUM */
 
 .tank {
   position: relative;
-  height: 410px;
+  isolation: isolate;
+  height: clamp(390px, 112vw, 485px);
   width: 100%;
   overflow: hidden;
-  border: 3px solid #6bdcff;
-  border-radius: 24px;
+  border: 2px solid #79e8ff;
+  border-radius: 25px;
   background:
-    radial-gradient(ellipse at 50% 15%, #55dfff33, transparent 45%),
-    linear-gradient(180deg, #0a5a83 0%, #073a63 45%, #031b3b 100%);
+    linear-gradient(
+      180deg,
+      #08749a 0%,
+      #075078 22%,
+      #063456 58%,
+      #031a34 100%
+    );
   box-shadow:
-    inset 0 0 35px #8ceaff55,
-    0 0 25px #00bfff55;
+    inset 0 0 45px #9cefff55,
+    0 0 26px #00bfff55;
 }
 
-.tank::before {
-  content: "";
+.water-surface {
   position: absolute;
-  inset: -20% 0 0;
-  background: repeating-linear-gradient(
-    110deg,
-    transparent 0 45px,
-    #b5f7ff13 48px 53px,
-    transparent 58px 100px
+  z-index: 1;
+  top: -10px;
+  left: -8%;
+  width: 116%;
+  height: 35px;
+  border-radius: 50%;
+  background: linear-gradient(
+    180deg,
+    #e4ffffaa,
+    #64dfff55 45%,
+    transparent
   );
-  animation: rays 9s linear infinite;
-  pointer-events: none;
+  filter: blur(5px);
+  animation: surface 5s ease-in-out infinite alternate;
 }
 
-@keyframes rays {
-  from { transform: translateX(-40px); }
-  to { transform: translateX(40px); }
+@keyframes surface {
+  to {
+    transform: translateX(15px) scaleY(.75);
+  }
+}
+
+.rays {
+  position: absolute;
+  inset: -20% -40%;
+  z-index: 0;
+  pointer-events: none;
+  background: repeating-conic-gradient(
+    from 10deg at 50% 0%,
+    transparent 0deg 8deg,
+    #c8f8ff12 9deg 12deg,
+    transparent 13deg 22deg
+  );
+  filter: blur(7px);
+  animation: raymove 18s ease-in-out infinite alternate;
+}
+
+@keyframes raymove {
+  to {
+    transform: translateX(55px) rotate(5deg);
+    opacity: .55;
+  }
+}
+
+.caustics {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: .22;
+  background: repeating-radial-gradient(
+    ellipse at 45% 8%,
+    transparent 0 24px,
+    #c8fbff20 25px 27px,
+    transparent 29px 55px
+  );
+  animation: caustic 12s linear infinite;
+}
+
+@keyframes caustic {
+  to {
+    background-position: 70px 40px;
+  }
 }
 
 .water-glow {
   position: absolute;
-  top: 10%;
-  left: 20%;
-  width: 60%;
-  height: 55%;
+  top: 5%;
+  left: 15%;
+  width: 70%;
+  height: 45%;
   border-radius: 50%;
-  background: #63eaff18;
-  filter: blur(35px);
+  background: #7deaff22;
+  filter: blur(40px);
 }
 
-.bubble {
+/* REAL FISH PHOTOS */
+
+.fish {
   position: absolute;
-  bottom: -20px;
-  width: 7px;
-  height: 7px;
-  border: 1px solid #c7f8ffbb;
-  border-radius: 50%;
-  background: #b9f8ff22;
-  animation: rise linear infinite;
+  z-index: 5;
+  width: clamp(130px, 37vw, 180px);
+  height: 135px;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 8px 9px #00101dcc)
+    drop-shadow(0 0 10px #7beaff44);
+  transform-origin: center;
+  will-change: transform;
+  user-select: none;
+  pointer-events: none;
+
+  /* Fade photo edges into aquarium water */
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    #000 43%,
+    #000d 58%,
+    transparent 77%
+  );
+  mask-image: radial-gradient(
+    ellipse at center,
+    #000 43%,
+    #000d 58%,
+    transparent 77%
+  );
 }
 
-@keyframes rise {
-  to {
-    transform: translateY(-460px);
-    opacity: 0;
+.fish.gold {
+  top: 20%;
+  left: 1%;
+  animation: goldSwim 14s ease-in-out infinite;
+}
+
+.fish.blue {
+  width: clamp(125px, 35vw, 165px);
+  top: 52%;
+  left: 54%;
+  animation: blueSwim 17s ease-in-out infinite -4s;
+}
+
+@keyframes goldSwim {
+  0%, 100% {
+    transform: translate(0, 0) scaleX(1) rotate(1deg);
+  }
+
+  22% {
+    transform: translate(75px, 25px) scaleX(1) rotate(-3deg);
+  }
+
+  48% {
+    transform: translate(165px, -8px) scaleX(-1) rotate(2deg);
+  }
+
+  72% {
+    transform: translate(85px, 35px) scaleX(-1) rotate(-2deg);
   }
 }
 
-.plant {
-  position: absolute;
-  bottom: 30px;
-  width: 12px;
-  height: 95px;
-  border-radius: 100% 0;
-  background: linear-gradient(90deg, #0b694f, #35c58b);
-  transform-origin: bottom;
-  animation: plantMove 3s ease-in-out infinite alternate;
+@keyframes blueSwim {
+  0%, 100% {
+    transform: translate(0, 0) scaleX(-1) rotate(-2deg);
+  }
+
+  28% {
+    transform: translate(-90px, -30px) scaleX(-1) rotate(3deg);
+  }
+
+  55% {
+    transform: translate(-165px, 18px) scaleX(1) rotate(-2deg);
+  }
+
+  80% {
+    transform: translate(-65px, -20px) scaleX(1) rotate(2deg);
+  }
 }
 
-@keyframes plantMove {
-  to { transform: rotate(12deg); }
+.fish.feeding {
+  animation: none !important;
+  transition: transform 1.2s cubic-bezier(.2, .8, .2, 1);
 }
+
+/* AQUATIC PLANTS */
+
+.plant {
+  position: absolute;
+  z-index: 3;
+  bottom: 22px;
+  width: 15px;
+  height: 110px;
+  transform-origin: bottom center;
+  border-radius: 100% 0 100% 0;
+  background: linear-gradient(
+    90deg,
+    #064c43,
+    #25b987 55%,
+    #8de6a0
+  );
+  box-shadow: inset -3px 0 6px #00372c;
+  animation: sway 4s ease-in-out infinite alternate;
+}
+
+.plant::before,
+.plant::after {
+  content: "";
+  position: absolute;
+  bottom: 22px;
+  width: 19px;
+  height: 58%;
+  border-radius: 100% 0 100% 0;
+  background: linear-gradient(90deg, #075443, #37c98d);
+}
+
+.plant::before {
+  left: -12px;
+  transform: rotate(-25deg);
+}
+
+.plant::after {
+  right: -13px;
+  transform: rotate(25deg) scaleX(-1);
+}
+
+@keyframes sway {
+  to {
+    transform: rotate(9deg);
+  }
+}
+
+/* CORAL */
+
+.coral {
+  position: absolute;
+  z-index: 3;
+  bottom: 22px;
+  width: 55px;
+  height: 65px;
+  border-radius: 48% 52% 12% 12%;
+  background: radial-gradient(
+    circle at 30% 25%,
+    #ffb18b,
+    #d75b55 48%,
+    #6e3045
+  );
+  filter: drop-shadow(0 3px 4px #001);
+}
+
+.coral::before,
+.coral::after {
+  content: "";
+  position: absolute;
+  bottom: 30px;
+  width: 17px;
+  height: 40px;
+  border-radius: 100% 100% 20% 20%;
+  background: linear-gradient(#ff9c88, #a83c5a);
+}
+
+.coral::before {
+  left: 3px;
+  transform: rotate(-24deg);
+}
+
+.coral::after {
+  right: 2px;
+  transform: rotate(24deg);
+}
+
+/* ROCKS AND SAND */
 
 .rock {
   position: absolute;
-  bottom: 18px;
-  width: 75px;
-  height: 38px;
-  border-radius: 50% 50% 25% 25%;
-  background: linear-gradient(140deg, #718b9a, #1b3449);
+  z-index: 3;
+  bottom: 17px;
+  width: 83px;
+  height: 37px;
+  border-radius: 55% 45% 25% 25%;
+  background: linear-gradient(
+    140deg,
+    #8196a0,
+    #344e60 65%,
+    #152c40
+  );
   box-shadow: inset -8px -7px 12px #06172b;
 }
 
 .sand {
   position: absolute;
+  z-index: 2;
   bottom: 0;
-  height: 26px;
+  height: 29px;
   width: 100%;
-  background: linear-gradient(#c4b68a, #726b57);
-  opacity: .8;
+  background: linear-gradient(#c8bb91, #77705e);
+  opacity: .9;
 }
 
-.fish {
+/* BUBBLES */
+
+.bubble {
   position: absolute;
-  width: 105px;
-  height: 65px;
   z-index: 4;
-  transform-origin: center;
-  animation: swim 13s ease-in-out infinite alternate;
+  bottom: -15px;
+  border: 1px solid #d4fbffbb;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 25%,
+    #fff9,
+    transparent 45%
+  );
+  box-shadow: inset -2px -2px 4px #9defff55;
+  animation: rise linear forwards;
+  pointer-events: none;
 }
 
-.fish svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  filter: drop-shadow(0 4px 7px #00101e99);
-}
-
-.fish.gold {
-  top: 25%;
-  left: 5%;
-}
-
-.fish.blue {
-  top: 55%;
-  left: 55%;
-  width: 92px;
-  animation-duration: 17s;
-  animation-delay: -5s;
-}
-
-@keyframes swim {
-  0% {
-    transform: translate(0, 0) scaleX(1);
-  }
-  25% {
-    transform: translate(100px, 25px) scaleX(1);
-  }
-  50% {
-    transform: translate(190px, -25px) scaleX(-1);
-  }
-  75% {
-    transform: translate(80px, 35px) scaleX(-1);
-  }
-  100% {
-    transform: translate(0, -10px) scaleX(1);
-  }
-}
-
-.feed-food {
-  position: absolute;
-  top: 10%;
-  left: 50%;
-  z-index: 8;
-  font-size: 13px;
-  animation: foodFall 2s ease-in forwards;
-}
-
-@keyframes foodFall {
+@keyframes rise {
   to {
-    transform: translateY(300px);
+    transform: translate(var(--drift), -520px) scale(.55);
     opacity: 0;
   }
 }
 
+/* FOOD */
+
+.food-pellet {
+  position: absolute;
+  z-index: 8;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 25%,
+    #fff4b0,
+    #e8a52c 70%
+  );
+  box-shadow: 0 0 8px #ffd96b;
+  pointer-events: none;
+}
+
+/* CONTROLS */
+
 .controls {
-  margin-top: 16px;
+  margin-top: 15px;
   padding: 16px;
-  border: 1px solid #4ccfff55;
-  border-radius: 18px;
-  background: #082641;
+  border: 1px solid #61dfff4c;
+  border-radius: 19px;
+  background: linear-gradient(145deg, #092e4c, #061b31);
+  box-shadow: 0 12px 30px #0004;
 }
 
 .controls h2 {
   margin: 0 0 12px;
-  color: #9beaff;
+  color: #a9f0ff;
   font-size: 17px;
 }
 
@@ -264,6 +449,11 @@ body {
   box-shadow: 0 0 18px #48dfff44;
 }
 
+.feed-button:active,
+.package:active {
+  transform: scale(.98);
+}
+
 .packages {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -272,12 +462,13 @@ body {
 }
 
 .package {
-  padding: 12px 5px;
+  padding: 12px 4px;
   border: 1px solid #6adfff66;
   border-radius: 12px;
   color: #fff;
   background: #0b3858;
   cursor: pointer;
+  font-size: 12px;
 }
 
 .package.active {
@@ -290,27 +481,51 @@ body {
   display: block;
   color: #ffe18b;
   margin-bottom: 5px;
+  font-size: 12px;
 }
 
 .wish {
-  margin-top: 15px;
+  min-height: 42px;
+  margin-top: 14px;
   text-align: center;
-  color: #b8e7f8;
+  color: #c2eafa;
   font-size: 13px;
-  line-height: 1.7;
+  line-height: 1.8;
 }
 
 .notice {
-  margin-top: 15px;
+  margin-top: 13px;
   color: #8caec2;
-  font-size: 11px;
+  font-size: 10px;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.credit {
+  margin-top: 9px;
+  color: #8caec2;
+  font-size: 9px;
   text-align: center;
   line-height: 1.6;
+}
+
+.credit a {
+  color: #a9eaff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
 }
 </style>
 </head>
 
 <body>
+
 <div class="app">
 
   <header class="header">
@@ -318,98 +533,123 @@ body {
     <p>YOUR LITTLE UNDERWATER WORLD</p>
   </header>
 
+  <!-- BALANCE -->
+
   <section class="balance">
+
     <div class="balance-card">
       <small>အစာလက်ကျန်</small>
       <strong id="foodBalance">10</strong>
     </div>
+
     <div class="balance-card">
       <small>ငါးလေးများ</small>
       <strong>2 🐠</strong>
     </div>
+
   </section>
+
+  <!-- AQUARIUM -->
 
   <section class="tank" id="tank">
+
+    <div class="rays"></div>
+    <div class="caustics"></div>
     <div class="water-glow"></div>
+    <div class="water-surface"></div>
 
-    <div class="fish gold" id="goldFish">
-      <svg viewBox="0 0 120 70">
-        <path d="M22 35 L3 12 Q-3 35 3 58 Z"
-          fill="#ffb52e" stroke="#ffe29b" stroke-width="2"/>
-        <ellipse cx="58" cy="35" rx="39" ry="23"
-          fill="url(#gold)" stroke="#ffe29b" stroke-width="2"/>
-        <path d="M53 15 Q68 -2 82 15"
-          fill="#ffcf55" stroke="#ffe29b" stroke-width="2"/>
-        <path d="M55 55 Q72 72 87 54"
-          fill="#e88b22" stroke="#ffe29b" stroke-width="2"/>
-        <circle cx="82" cy="28" r="5" fill="white"/>
-        <circle cx="84" cy="28" r="2.5" fill="#102238"/>
-        <path d="M92 40 Q100 45 106 38"
-          fill="none" stroke="#783c19" stroke-width="2"/>
-        <defs>
-          <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
-            <stop stop-color="#fff0a0"/>
-            <stop offset=".45" stop-color="#ffbd36"/>
-            <stop offset="1" stop-color="#d66b13"/>
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
+    <!-- GOLDEN FISH -->
 
-    <div class="fish blue" id="blueFish">
-      <svg viewBox="0 0 120 70">
-        <path d="M22 35 L3 12 Q-3 35 3 58 Z"
-          fill="#76dfff" stroke="#d8f8ff" stroke-width="2"/>
-        <ellipse cx="58" cy="35" rx="39" ry="23"
-          fill="url(#pearl)" stroke="#d8f8ff" stroke-width="2"/>
-        <path d="M55 15 Q68 -3 82 15"
-          fill="#a5ecff" stroke="#d8f8ff" stroke-width="2"/>
-        <path d="M55 55 Q72 72 87 54"
-          fill="#398ac4" stroke="#d8f8ff" stroke-width="2"/>
-        <circle cx="82" cy="28" r="5" fill="white"/>
-        <circle cx="84" cy="28" r="2.5" fill="#102238"/>
-        <path d="M92 40 Q100 45 106 38"
-          fill="none" stroke="#174d76" stroke-width="2"/>
-        <defs>
-          <linearGradient id="pearl" x1="0" x2="1" y1="0" y2="1">
-            <stop stop-color="#e8ffff"/>
-            <stop offset=".5" stop-color="#69d9ff"/>
-            <stop offset="1" stop-color="#2874ba"/>
-          </linearGradient>
-        </defs>
-      </svg>
-    </div>
+    <img
+      class="fish gold"
+      id="goldFish"
+      alt="Golden Goldfish"
+      src="https://commons.wikimedia.org/wiki/Special:FilePath/Goldfish%20in%20Fish%20Tank.jpg"
+    >
 
-    <div class="plant" style="left:8%;height:95px"></div>
-    <div class="plant" style="left:16%;height:70px;animation-delay:-1s"></div>
-    <div class="plant" style="right:12%;height:110px"></div>
-    <div class="plant" style="right:20%;height:75px;animation-delay:-2s"></div>
+    <!-- PEARL BLUE BETTA -->
 
-    <div class="rock" style="left:28%"></div>
-    <div class="rock" style="right:25%;width:55px"></div>
+    <img
+      class="fish blue"
+      id="blueFish"
+      alt="Blue Betta Fish"
+      src="https://commons.wikimedia.org/wiki/Special:FilePath/Blue%20Betta%20Splendens.jpg"
+    >
+
+    <!-- PLANTS -->
+
+    <div class="plant" style="left:7%;height:105px"></div>
+    <div class="plant" style="left:16%;height:75px;animation-delay:-1.5s"></div>
+    <div class="plant" style="right:9%;height:118px;animation-delay:-.8s"></div>
+    <div class="plant" style="right:19%;height:82px;animation-delay:-2s"></div>
+
+    <!-- CORAL -->
+
+    <div class="coral" style="left:27%"></div>
+
+    <div
+      class="coral"
+      style="
+        right:30%;
+        transform:scale(.8);
+        background:radial-gradient(circle at 30% 25%,#ffd38b,#d58a43 48%,#6e4935)
+      "
+    ></div>
+
+    <!-- ROCKS -->
+
+    <div class="rock" style="left:34%"></div>
+    <div class="rock" style="right:7%;width:65px"></div>
+
     <div class="sand"></div>
+
   </section>
 
+  <!-- AQUARIUM CONTROLS -->
+
   <section class="controls">
+
     <h2>🐠 ငါးလေးတွေကို ဂရုစိုက်မယ်</h2>
 
-    <button class="feed-button" onclick="feedFish()">
+    <button
+      class="feed-button"
+      id="feedButton"
+      type="button"
+    >
       ငါးလေးတွေကို အစာကျွေးမယ်
     </button>
 
+    <!-- FOOD PACKAGES -->
+
     <div class="packages">
-      <button class="package active" onclick="selectPackage(1000,this)">
+
+      <button
+        class="package active"
+        type="button"
+        data-amount="1000"
+      >
         <strong>1,000 MMK</strong>
         အစာ 10
       </button>
-      <button class="package" onclick="selectPackage(3000,this)">
+
+      <button
+        class="package"
+        type="button"
+        data-amount="3000"
+      >
         <strong>3,000 MMK</strong>
         အစာ 35
       </button>
-      <button class="package" onclick="selectPackage(5000,this)">
+
+      <button
+        class="package"
+        type="button"
+        data-amount="5000"
+      >
         <strong>5,000 MMK</strong>
         အစာ 60
       </button>
+
     </div>
 
     <div class="wish" id="wish">
@@ -418,79 +658,276 @@ body {
     </div>
 
     <div class="notice">
-      ဤအရာသည် Demo Aquarium ဖြစ်သည်။<br>
+      ဤသည် Demo Aquarium ဖြစ်သည်။<br>
       MMK package များအတွက် ငွေပေးချေမှုစနစ် မချိတ်ဆက်ရသေးပါ။
     </div>
+
+    <div class="credit">
+      Fish photographs:
+      <a href="https://commons.wikimedia.org/wiki/File:Goldfish_in_Fish_Tank.jpg" target="_blank">Goldfish</a>
+      ·
+      <a href="https://commons.wikimedia.org/wiki/File:Blue_Betta_Splendens.jpg" target="_blank">Blue Betta</a>
+      · Wikimedia Commons
+    </div>
+
   </section>
 
 </div>
 
 <script>
-let food = 10;
+
+/* MAIN SETTINGS */
+
+const tank = document.getElementById("tank");
+
+const foodBalance = document.getElementById("foodBalance");
+
+const wish = document.getElementById("wish");
+
+const fish = [
+  document.getElementById("goldFish"),
+  document.getElementById("blueFish")
+];
+
+let food = Number(localStorage.getItem("luckyOceanFood"));
+
+if (!Number.isFinite(food) || food < 0) {
+  food = 10;
+}
+
 let selectedPackage = 1000;
+let feeding = false;
+
+
+/* UPDATE FOOD BALANCE */
 
 function updateBalance() {
-  document.getElementById("foodBalance").textContent = food;
+
+  foodBalance.textContent = food;
+
+  localStorage.setItem(
+    "luckyOceanFood",
+    String(food)
+  );
+
 }
 
-function selectPackage(amount, button) {
-  selectedPackage = amount;
 
-  document.querySelectorAll(".package").forEach(item => {
-    item.classList.remove("active");
-  });
-
-  button.classList.add("active");
-
-  document.getElementById("wish").textContent =
-    amount.toLocaleString("en-US") +
-    " MMK အစာ Package ကို ရွေးထားပါတယ်။ Demo အတွက်သာ ဖြစ်ပါတယ်။";
-}
-
-function feedFish() {
-  if (food <= 0) {
-    document.getElementById("wish").textContent =
-      "အစာကုန်သွားပါပြီ။ Package ဝယ်ယူမှုကို မချိတ်ဆက်ရသေးပါ။";
-    return;
-  }
-
-  food--;
-  updateBalance();
-
-  const tank = document.getElementById("tank");
-
-  for (let i = 0; i < 5; i++) {
-    const pellet = document.createElement("div");
-    pellet.className = "feed-food";
-    pellet.textContent = "🟡";
-    pellet.style.left = (35 + Math.random() * 30) + "%";
-    pellet.style.animationDelay = (i * 0.15) + "s";
-    tank.appendChild(pellet);
-
-    setTimeout(() => pellet.remove(), 2500);
-  }
-
-  document.getElementById("wish").textContent =
-    "🐠 ငါးလေးတွေ အစာစားနေကြပါပြီ။ ပျော်ရွှင်ပါစေ။";
-}
+/* CREATE UNDERWATER BUBBLES */
 
 function createBubble() {
-  const tank = document.getElementById("tank");
-  const bubble = document.createElement("div");
+
+  const bubble = document.createElement("span");
 
   bubble.className = "bubble";
-  bubble.style.left = Math.random() * 95 + "%";
-  bubble.style.animationDuration = (4 + Math.random() * 5) + "s";
-  bubble.style.width = (4 + Math.random() * 7) + "px";
-  bubble.style.height = bubble.style.width;
+
+  const size = 4 + Math.random() * 8;
+
+  bubble.style.width = size + "px";
+
+  bubble.style.height = size + "px";
+
+  bubble.style.left =
+    (3 + Math.random() * 94) + "%";
+
+  bubble.style.animationDuration =
+    (5 + Math.random() * 5) + "s";
+
+  bubble.style.setProperty(
+    "--drift",
+    (Math.random() * 55 - 27) + "px"
+  );
 
   tank.appendChild(bubble);
 
-  setTimeout(() => bubble.remove(), 10000);
+  setTimeout(() => {
+    bubble.remove();
+  }, 10500);
+
 }
 
-setInterval(createBubble, 450);
+setInterval(createBubble, 650);
+
+
+/* DROP FOOD */
+
+function addFood(x, delay) {
+
+  const pellet = document.createElement("i");
+
+  pellet.className = "food-pellet";
+
+  pellet.style.left = x + "%";
+
+  pellet.style.top = "12%";
+
+  tank.appendChild(pellet);
+
+  const fall = 300 + Math.random() * 90;
+
+  pellet.animate(
+    [
+      {
+        transform: "translateY(0)",
+        opacity: 1
+      },
+      {
+        transform: "translateY(" + fall + "px)",
+        opacity: .95
+      }
+    ],
+    {
+      duration: 1900,
+      delay: delay,
+      easing: "ease-in",
+      fill: "forwards"
+    }
+  );
+
+  setTimeout(() => {
+    pellet.remove();
+  }, 2300 + delay);
+
+}
+
+
+/* FISH SWIM TOWARD FOOD */
+
+function attractFish() {
+
+  const tankRect = tank.getBoundingClientRect();
+
+  fish.forEach((f, index) => {
+
+    const fishRect = f.getBoundingClientRect();
+
+    const centerX =
+      fishRect.left + fishRect.width / 2;
+
+    const centerY =
+      fishRect.top + fishRect.height / 2;
+
+    const targetX =
+      tankRect.left + tankRect.width * (index === 0 ? .55 : .45);
+
+    const targetY =
+      tankRect.top + tankRect.height * .62;
+
+    const dx = targetX - centerX;
+
+    const dy = targetY - centerY;
+
+    f.classList.add("feeding");
+
+    f.style.transform =
+      "translate(" + dx + "px," + dy + "px) scaleX(1)";
+
+  });
+
+  setTimeout(() => {
+
+    fish.forEach(f => {
+
+      f.style.transform = "";
+
+      f.classList.remove("feeding");
+
+    });
+
+  }, 2600);
+
+}
+
+
+/* FEED FISH */
+
+function feedFish() {
+
+  if (feeding) return;
+
+  if (food <= 0) {
+
+    wish.textContent =
+      "အစာကုန်သွားပါပြီ။ Demo ဖြစ်တဲ့အတွက် Package ငွေပေးချေမှု မချိတ်ဆက်ရသေးပါ။";
+
+    return;
+
+  }
+
+  food--;
+
+  updateBalance();
+
+  feeding = true;
+
+  for (let i = 0; i < 7; i++) {
+
+    addFood(
+      35 + Math.random() * 30,
+      i * 100
+    );
+
+  }
+
+  attractFish();
+
+  wish.textContent =
+    "🐠 အစာလေးတွေ ကျလာပြီ။ ငါးလေးတွေ အစာဆီကို ကူးလာနေပါပြီ။";
+
+  setTimeout(() => {
+
+    feeding = false;
+
+    wish.textContent =
+      "💙 ငါးလေးတွေ အစာစားပြီး ပျော်ရွှင်နေကြပါပြီ။";
+
+  }, 2800);
+
+}
+
+
+/* FEED BUTTON */
+
+document
+  .getElementById("feedButton")
+  .addEventListener("click", feedFish);
+
+
+/* SELECT FOOD PACKAGE */
+
+document
+  .querySelectorAll(".package")
+  .forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      selectedPackage =
+        Number(button.dataset.amount);
+
+      document
+        .querySelectorAll(".package")
+        .forEach(item => {
+
+          item.classList.toggle(
+            "active",
+            item === button
+          );
+
+        });
+
+      wish.textContent =
+        selectedPackage.toLocaleString("en-US") +
+        " MMK အစာ Package ကို ရွေးထားပါတယ်။ Demo အတွက်သာ ဖြစ်ပါတယ်။";
+
+    });
+
+  });
+
+
+/* START */
+
 updateBalance();
+
 </script>
 
 </body>
