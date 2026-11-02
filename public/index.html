@@ -1,95 +1,616 @@
-
 <!DOCTYPE html>
-<html lang="my">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#03152b">
-<title>LUCKY OCEAN — Lost Underworld</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#031a2d">
+<title>LUCKY OCEAN</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#020b19;color:#effbff;font-family:Arial,sans-serif}body{overflow-x:hidden}.app{width:100%;max-width:650px;margin:auto;padding:14px 12px 30px}.header{text-align:center;padding:8px 0 15px}.header h1{margin:0;font-size:clamp(27px,7vw,36px);letter-spacing:5px;color:#b9f5ff;text-shadow:0 0 12px #42d9ff,0 0 30px #087dbb}.header p{margin:7px 0 0;font-size:10px;letter-spacing:3px;color:#a6d8ed}.balance{display:flex;gap:10px;margin-bottom:12px}.balance-card{flex:1;padding:12px;border:1px solid #75e5ff55;border-radius:14px;background:linear-gradient(145deg,#0d4261dd,#061d35ee);box-shadow:0 8px 24px #0006}.balance-card small{display:block;color:#a9cfdf;margin-bottom:6px;font-size:12px}.balance-card strong{font-size:20px;color:#ffe29a}.scene-shell{position:relative;width:100%;height:clamp(480px,135vw,650px);max-height:72vh;min-height:480px;overflow:hidden;border:1px solid #72e8ff;border-radius:23px;background:#032b4a;box-shadow:0 0 28px #00bfff55,inset 0 0 30px #a4f5ff33}#ocean{position:absolute;inset:0;width:100%;height:100%;display:block}.scene-label{position:absolute;z-index:3;top:14px;left:0;right:0;text-align:center;pointer-events:none;color:#c7f6ff;text-shadow:0 2px 10px #001b35;letter-spacing:2px;font-size:10px}.scene-hint{position:absolute;z-index:3;bottom:12px;left:0;right:0;text-align:center;font-size:10px;color:#c4efff99;text-shadow:0 1px 5px #001}.status{position:absolute;z-index:4;top:40px;right:12px;padding:6px 9px;border-radius:20px;background:#001c35aa;border:1px solid #72dfff55;color:#c9f8ff;font-size:9px}.controls{margin-top:14px;padding:16px;border:1px solid #61dfff55;border-radius:18px;background:linear-gradient(145deg,#092e4c,#061b31);box-shadow:0 12px 30px #0005}.controls h2{margin:0 0 12px;color:#a9f0ff;font-size:17px}.feed-button{width:100%;padding:15px;border:0;border-radius:13px;color:#06213a;background:linear-gradient(90deg,#8beaff,#f5d68a);font-size:16px;font-weight:bold;cursor:pointer}.feed-button:active,.package:active,.sound-button:active{transform:scale(.98)}.packages{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.package{padding:12px 4px;border:1px solid #6adfff66;border-radius:12px;color:#fff;background:#0b3858;cursor:pointer;font-size:12px}.package.active{border-color:#ffe18b;background:#26516a;box-shadow:0 0 12px #ffe18b55}.package strong{display:block;color:#ffe18b;margin-bottom:5px;font-size:12px}.sound-panel{margin-top:14px;padding:13px;border:1px solid #64dfff55;border-radius:14px;background:#041b30}.sound-top{display:flex;align-items:center;justify-content:space-between;gap:10px}.sound-title{font-size:14px;color:#b9efff;font-weight:bold}.sound-button{border:1px solid #74e5ff88;border-radius:20px;padding:9px 15px;color:#d8faff;background:#0b4565;font-weight:bold;cursor:pointer}.sound-button.on{background:#176d68;border-color:#70ffcf;color:#caffed}.volume-row{display:flex;align-items:center;gap:10px;margin-top:12px;color:#a9d9e9;font-size:12px}.volume-row input{flex:1;accent-color:#6deaff}.sound-note{margin-top:8px;color:#789fb5;font-size:10px;line-height:1.5}.wish{min-height:42px;margin-top:14px;text-align:center;color:#c2eafa;font-size:13px;line-height:1.8}.notice{margin-top:13px;color:#8caec2;font-size:10px;text-align:center;line-height:1.7}.credit{margin-top:9px;color:#8caec2;font-size:9px;text-align:center}@media(max-width:380px){.app{padding-left:9px;padding-right:9px}.scene-shell{min-height:460px}.balance-card{padding:10px}}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#031a2d;color:#fff;font-family:Arial,sans-serif}
+#world{position:fixed;inset:0;width:100%;height:100%;display:block}
+.overlay{position:fixed;inset:0;pointer-events:none;display:flex;flex-direction:column;justify-content:space-between;padding:18px 15px calc(18px + env(safe-area-inset-bottom));}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.brand{font-size:22px;font-weight:900;letter-spacing:2px;text-shadow:0 0 14px #32dfff}
+.subtitle{font-size:9px;letter-spacing:2px;color:#9ddff2;margin-top:4px}
+.stats{display:flex;gap:7px}
+.stat{background:#031d31bb;border:1px solid #4bdfff55;border-radius:12px;padding:9px 11px;backdrop-filter:blur(8px);text-align:center;min-width:76px}
+.stat small{display:block;color:#9ddff2;font-size:9px;margin-bottom:4px}
+.stat strong{font-size:15px;color:#fff}
+.bottom{pointer-events:auto;display:flex;flex-direction:column;gap:10px}
+.status{text-align:center;font-size:11px;color:#a9e9fa;text-shadow:0 1px 5px #001a2b}
+.panel{background:linear-gradient(145deg,#062a42eF,#031629ee);border:1px solid #3cd9ff55;border-radius:18px;padding:13px;box-shadow:0 0 25px #00bfff18;backdrop-filter:blur(12px)}
+.panel-title{font-size:11px;letter-spacing:1.5px;color:#9beaff;margin-bottom:10px;font-weight:bold}
+.actions{display:flex;gap:9px}
+button{border:0;border-radius:12px;padding:13px 15px;font-weight:800;color:white;cursor:pointer}
+#feedBtn{flex:1;background:linear-gradient(110deg,#00bde8,#0875cb);box-shadow:0 5px 18px #00bfff35}
+#soundBtn{background:#103b55;border:1px solid #4bdfff66;min-width:54px}
+.packages{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.package{background:#0a3852;border:1px solid #36cfff66;border-radius:12px;padding:11px 5px;text-align:center}
+.package strong{display:block;font-size:14px;color:#fff}
+.package span{display:block;font-size:10px;color:#9ceaff;margin-top:5px}
+.package button{margin-top:8px;width:100%;padding:8px 3px;font-size:10px;background:#087fba}
+.sound-row{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:10px;color:#b9e9f7}
+.sound-row input{flex:1;accent-color:#16cfff}
+#loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#031a2d;z-index:10;color:#8deaff;letter-spacing:3px;font-size:13px;transition:opacity .6s}
+#loading.hide{opacity:0;pointer-events:none}
+#message{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#052a40ee;border:1px solid #4bdfff;border-radius:12px;padding:12px 18px;font-size:12px;display:none;z-index:20;text-align:center;max-width:85%}
+@media(max-height:650px){
+ .overlay{padding:12px}
+ .panel{padding:10px}
+ .package{padding:8px 4px}
+ button{padding:10px}
+ .brand{font-size:18px}
+}
 </style>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+  }
+}
+</script>
 </head>
+
 <body>
-<div class="app">
-<header class="header"><h1>LUCKY OCEAN</h1><p>YOUR LITTLE UNDERWATER WORLD</p></header>
-<section class="balance"><div class="balance-card"><small>အစာလက်ကျန်</small><strong id="foodBalance">10</strong></div><div class="balance-card"><small>ငါးလေးများ</small><strong>2 🐠</strong></div></section>
-<section class="scene-shell"><canvas id="ocean"></canvas><div class="scene-label">✦ THE LOST UNDERWATER WORLD ✦</div><div class="status" id="renderStatus">LOADING WORLD…</div><div class="scene-hint">ပျောက်ဆုံးနေတဲ့ ရေအောက်မြို့ဟောင်းထဲက သင့်ငါးလေးများ</div></section>
-<section class="controls">
-<h2>🐠 ငါးလေးတွေကို ဂရုစိုက်မယ်</h2><button class="feed-button" id="feedButton" type="button">ငါးလေးတွေကို အစာကျွေးမယ်</button>
-<div class="packages"><button class="package active" type="button" data-amount="1000"><strong>1,000 MMK</strong>အစာ 10</button><button class="package" type="button" data-amount="3000"><strong>3,000 MMK</strong>အစာ 35</button><button class="package" type="button" data-amount="5000"><strong>5,000 MMK</strong>အစာ 60</button></div>
-<div class="sound-panel"><div class="sound-top"><div class="sound-title">🔊 UNDERWATER SOUND</div><button class="sound-button" id="soundButton" type="button">SOUND OFF</button></div><div class="volume-row"><span>အသံ</span><input id="volumeSlider" type="range" min="0" max="100" value="45"><span id="volumeValue">45%</span></div><div class="sound-note" id="soundNote">ရေအောက်သဘာဝအသံ၊ နူးညံ့တဲ့ Music နဲ့ အစာကျွေးသံများ</div></div>
-<div class="wish" id="wish">🌊 ရေအောက်ကမ္ဘာလေးထဲကို ကြိုဆိုပါတယ်။<br>ငါးလေးတွေနဲ့ အချိန်လေးကို ပျော်ရွှင်စွာ ဖြတ်သန်းပါ။</div><div class="notice">Demo Aquarium ဖြစ်သည်။ MMK package များအတွက် ငွေပေးချေမှုစနစ် မချိတ်ဆက်ရသေးပါ။</div><div class="credit">LUCKY OCEAN · LOST UNDERWORLD 3D EXPERIENCE<br>Jikin Goldfish by somitsu · CC BY 4.0</div>
-</section></div>
+<canvas id="world"></canvas>
+
+<div id="loading">LOADING UNDERWATER WORLD…</div>
+<div id="message"></div>
+
+<div class="overlay">
+  <div class="top">
+    <div>
+      <div class="brand">LUCKY OCEAN</div>
+      <div class="subtitle">YOUR LITTLE UNDERWATER WORLD</div>
+    </div>
+    <div class="stats">
+      <div class="stat">
+        <small>FOOD BALANCE</small>
+        <strong id="foodBalance">20</strong>
+      </div>
+      <div class="stat">
+        <small>MY FISH</small>
+        <strong id="fishCount">2</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="status" id="worldStatus">WELCOME TO YOUR OCEAN</div>
+
+    <div class="panel">
+      <div class="panel-title">OCEAN CARE</div>
+      <div class="actions">
+        <button id="feedBtn">🐟 FEED FISH</button>
+        <button id="soundBtn">🔊</button>
+      </div>
+      <div class="sound-row">
+        <span>VOLUME</span>
+        <input id="volume" type="range" min="0" max="100" value="35">
+        <span id="volumeValue">35%</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">GET MORE FISH FOOD</div>
+      <div class="packages">
+        <div class="package">
+          <strong>1,000 MMK</strong>
+          <span>10 FOOD</span>
+          <button data-food="10" data-price="1000">SELECT</button>
+        </div>
+        <div class="package">
+          <strong>3,000 MMK</strong>
+          <span>35 FOOD</span>
+          <button data-food="35" data-price="3000">SELECT</button>
+        </div>
+        <div class="package">
+          <strong>5,000 MMK</strong>
+          <span>60 FOOD</span>
+          <button data-food="60" data-price="5000">SELECT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script type="module">
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js';
-import {GLTFLoader} from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
+import * as THREE from 'three';
+import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/loaders/GLTFLoader.js';
 
-const canvas=document.getElementById('ocean'),shell=document.querySelector('.scene-shell'),statusText=document.getElementById('renderStatus'),wish=document.getElementById('wish'),foodBalance=document.getElementById('foodBalance');
-let food=Number(localStorage.getItem('luckyOceanFood'));if(!Number.isFinite(food)||food<0)food=10;let selectedPackage=1000,feeding=false,foodTarget=null;const foodMeshes=[],fishActors=[];
-function updateBalance(){foodBalance.textContent=food;localStorage.setItem('luckyOceanFood',String(food))}updateBalance();
+const canvas = document.getElementById('world');
+const loading = document.getElementById('loading');
+const statusText = document.getElementById('worldStatus');
+const message = document.getElementById('message');
 
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x032b4a);scene.fog=new THREE.FogExp2(0x063957,.019);
-const camera=new THREE.PerspectiveCamera(48,1,.1,140);camera.position.set(0,1.1,22);camera.lookAt(0,-.1,-1);
-const renderer=new THREE.WebGLRenderer({canvas,antialias:false,alpha:false,powerPreference:'low-power'});renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.35));renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.18;
-const mat=(color,roughness=.7,metalness=0,emissive=0x000000,intensity=0)=>new THREE.MeshStandardMaterial({color,roughness,metalness,emissive,emissiveIntensity:intensity});
-scene.add(new THREE.HemisphereLight(0xa7eaff,0x062238,2.1));const sun=new THREE.DirectionalLight(0xc4f6ff,2.6);sun.position.set(-7,12,8);scene.add(sun);
-const blueLight=new THREE.PointLight(0x16bfff,36,38);blueLight.position.set(7,4,3);scene.add(blueLight);const reefLight=new THREE.PointLight(0x27e7cb,20,27);reefLight.position.set(-8,-3,2);scene.add(reefLight);
+let scene, camera, renderer, clock;
+let fish = [];
+let bubbles = [];
+let foodPellets = [];
+let plants = [];
+let soundOn = true;
+let volume = 0.35;
+let audioContext = null;
+let foodBalance = Number(localStorage.getItem('luckyOceanFood') || 20);
+let feeding = false;
 
-const floor=new THREE.Mesh(new THREE.PlaneGeometry(60,38),mat(0x0b5362));floor.rotation.x=-Math.PI/2;floor.position.set(0,-6,-4);scene.add(floor);
-const sand=new THREE.Mesh(new THREE.BoxGeometry(60,.5,23),mat(0x9c9670));sand.position.set(0,-6.35,-3);scene.add(sand);
+document.getElementById('foodBalance').textContent = foodBalance;
 
-const ruins=new THREE.Group();scene.add(ruins);const stone=mat(0x39758a,.72,.22),stoneLight=mat(0x6bb0b7,.58,.25),darkStone=mat(0x1b4054,.85);
-function column(x,y,z,h,r=.35,broken=false){const g=new THREE.Group();g.position.set(x,y,z);const shaft=new THREE.Mesh(new THREE.CylinderGeometry(r*.82,r,h,9,1),stone);shaft.position.y=h/2;g.add(shaft);const cap=new THREE.Mesh(new THREE.BoxGeometry(r*3,.28,r*3),stoneLight);cap.position.y=h;g.add(cap);const base=new THREE.Mesh(new THREE.CylinderGeometry(r*1.35,r*1.5,.3,9),stoneLight);base.position.y=.12;g.add(base);if(broken){const crack=new THREE.Mesh(new THREE.DodecahedronGeometry(r*.8,0),darkStone);crack.position.set(.1,h+.25,0);g.add(crack)}ruins.add(g)}
-for(let i=0;i<7;i++)column(-15+i*5,-5.9,-12,2.8+(i%3)*1.1,.38,i%2===0);
-function arch(x,y,z,rad,tube,rotation=0){const a=new THREE.Mesh(new THREE.TorusGeometry(rad,tube,9,36,Math.PI),stoneLight);a.position.set(x,y,z);a.rotation.set(0,rotation,Math.PI);ruins.add(a);const p1=new THREE.Mesh(new THREE.BoxGeometry(.55,2.9,.65),stone);p1.position.set(x-rad,y-1.45,z);const p2=p1.clone();p2.position.x=x+rad;ruins.add(p1,p2)}
-arch(-7,-1.1,-11,2.4,.3);arch(1,-.8,-13,3.1,.32);arch(9,-1.2,-11,2.2,.28);
-for(let i=0;i<12;i++){const b=new THREE.Mesh(new THREE.BoxGeometry(.8+Math.random()*1.5,.25+Math.random()*.35,.5+Math.random()),stone);b.position.set((Math.random()-.5)*24,-5.55,-9+Math.random()*4);b.rotation.y=Math.random()*2;b.rotation.z=(Math.random()-.5)*.25;ruins.add(b)}
+function showMessage(text){
+  message.textContent = text;
+  message.style.display = 'block';
+  setTimeout(()=>message.style.display='none',2300);
+}
 
-const rockMat=mat(0x203d50,.9);for(let i=0;i<27;i++){const rock=new THREE.Mesh(new THREE.DodecahedronGeometry(1,1),rockMat);rock.position.set((Math.random()-.5)*27,-5.55+Math.random()*.5,-5+Math.random()*8);rock.scale.set(.5+Math.random()*1.25,.35+Math.random()*.8,.5+Math.random());rock.rotation.set(Math.random(),Math.random(),Math.random());scene.add(rock)}
+function updateFood(){
+  document.getElementById('foodBalance').textContent = foodBalance;
+  localStorage.setItem('luckyOceanFood',String(foodBalance));
+}
 
-const coralGroups=[];function branch(g,a,b,r,m){const va=new THREE.Vector3(...a),vb=new THREE.Vector3(...b),d=new THREE.Vector3().subVectors(vb,va);const mesh=new THREE.Mesh(new THREE.CylinderGeometry(r*.55,r,d.length(),7),m);mesh.position.copy(va).add(vb).multiplyScalar(.5);mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());g.add(mesh)}
-function coral(x,z,color,s=1){const g=new THREE.Group();g.position.set(x,-5.7,z);g.scale.setScalar(s);scene.add(g);const m=mat(color,.38,.12,color,.28);for(let i=0;i<5;i++){const h=.75+Math.random()*1.2,side=(Math.random()-.5)*1.25;branch(g,[0,0,0],[side,h,0],.15,m);branch(g,[side,h,0],[side*1.55,h+.48,0],.105,m);if(i%2===0)branch(g,[side,h*.6,0],[side-.55,h*.95,.05],.09,m)}coralGroups.push(g)}
-coral(-10,-1,0xf07878,1.15);coral(-6,-2,0x9a76c9,.85);coral(7,-1,0xffa45e,1.15);coral(10,-2,0x9a76c9,.9);coral(2,-4,0x22b9ad,.8);
+function init(){
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x031b31);
+  scene.fog = new THREE.FogExp2(0x06334c,0.027);
 
-const glowMats=[mat(0x28e9dc,.28,.1,0x16cbbd,1.8),mat(0x8e67ff,.25,.1,0x6535ff,1.7),mat(0x46caff,.25,.1,0x168dff,1.8)];const glows=[];
-for(let i=0;i<23;i++){const m=glowMats[i%3],geo=i%3===0?new THREE.SphereGeometry(.13+Math.random()*.12,8,7):new THREE.OctahedronGeometry(.18+Math.random()*.18,0);const o=new THREE.Mesh(geo,m);o.position.set((Math.random()-.5)*22,-5.2+Math.random()*.8,-3-Math.random()*7);o.rotation.set(Math.random(),Math.random(),Math.random());scene.add(o);glows.push({o,phase:Math.random()*6})}
+  camera = new THREE.PerspectiveCamera(55,innerWidth/innerHeight,0.1,150);
+  camera.position.set(0,5,17);
+  camera.lookAt(0,2,0);
 
-const plants=[];const plantMats=[mat(0x168b68),mat(0x25aa79),mat(0x116b62)];function makePlant(x,z,h){const g=new THREE.Group();g.position.set(x,-5.75,z);scene.add(g);for(let i=0;i<5;i++){const leaf=new THREE.Mesh(new THREE.ConeGeometry(.16,h*.38,6),plantMats[i%3]);leaf.position.set(Math.sin(i*1.4)*.25,h*.3+i*h*.11,0);leaf.rotation.z=(i-2)*.17;leaf.scale.y=1.2;g.add(leaf)}plants.push({g,phase:Math.random()*6})}for(let i=0;i<15;i++)makePlant(-13+i*1.85,-2+Math.random()*3,2+Math.random()*2.4);
+  renderer = new THREE.WebGLRenderer({canvas,antialias:true,alpha:false});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.25;
 
-const rays=[];for(let i=0;i<8;i++){const r=new THREE.Mesh(new THREE.CylinderGeometry(.12,1.8,18,10,1,true),new THREE.MeshBasicMaterial({color:0x9ceeff,transparent:true,opacity:.045,side:THREE.DoubleSide,depthWrite:false}));r.position.set(-10+i*2.9,4,-5);r.rotation.z=(Math.random()-.5)*.18;scene.add(r);rays.push(r)}
+  clock = new THREE.Clock();
 
-const loader=new GLTFLoader();let loadedCount=0;function setLoadedLabel(){loadedCount++;statusText.textContent=loadedCount===2?'LOST UNDERWORLD · LIVE':`LOADING FISH ${loadedCount}/2`}
-function createFallbackFish(color){const g=new THREE.Group();const body=new THREE.Mesh(new THREE.SphereGeometry(1,20,16),mat(color,.35,.1));body.scale.set(1.45,.7,.55);g.add(body);const tail=new THREE.Mesh(new THREE.ConeGeometry(.65,.9,8),mat(color,.35));tail.position.x=-1.5;tail.rotation.z=Math.PI/2;g.add(tail);return g}
-function loadFish(url,label,settings){return new Promise(resolve=>{loader.load(url,gltf=>{const root=new THREE.Group(),model=gltf.scene;model.updateMatrixWorld(true);const box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());model.position.sub(center);const longest=Math.max(size.x,size.y,size.z)||1;model.scale.setScalar(settings.length/longest);root.add(model);root.rotation.y=settings.rotation||0;scene.add(root);let mixer=null;if(gltf.animations&&gltf.animations.length){mixer=new THREE.AnimationMixer(model);const action=mixer.clipAction(gltf.animations[0]);action.reset();action.setLoop(THREE.LoopRepeat);action.play()}const actor={root,model,mixer,label,phase:Math.random()*6.28,speed:settings.speed,baseY:settings.baseY,baseZ:settings.baseZ,radiusX:settings.radiusX,radiusY:settings.radiusY,facing:1,foodSide:settings.foodSide};fishActors.push(actor);setLoadedLabel();resolve(actor)},undefined,error=>{console.error('Could not load '+url,error);const root=createFallbackFish(settings.fallbackColor);scene.add(root);const actor={root,model:root,mixer:null,label,phase:Math.random()*6.28,speed:settings.speed,baseY:settings.baseY,baseZ:settings.baseZ,radiusX:settings.radiusX,radiusY:settings.radiusY,facing:1,foodSide:settings.foodSide};fishActors.push(actor);statusText.textContent='FISH MODEL ERROR';wish.textContent=label+' model ဖိုင်ကို မတွေ့ပါ။ GLB ဖိုင်တွေကို public Folder ထဲက index.html နဲ့အတူ ထည့်ထားပါ။';resolve(actor)})})}
+  const ambient = new THREE.AmbientLight(0x77cfff,1.5);
+  scene.add(ambient);
 
-/* Correct GitHub filenames, including spaces and parentheses */
-loadFish('./jikin-goldfish%20%281%29.glb','Jikin Goldfish',{length:4.2,rotation:0,speed:.55,baseY:1.05,baseZ:1.5,radiusX:6.2,radiusY:1.6,foodSide:-1,fallbackColor:0xffa72e});
-loadFish('./betta-splendens%20%281%29.glb','Pearl Blue Betta',{length:3.8,rotation:0,speed:.7,baseY:-1.25,baseZ:-1.5,radiusX:7.1,radiusY:1.4,foodSide:1,fallbackColor:0x238ddd});
+  const blueLight = new THREE.PointLight(0x1caeff,35,45);
+  blueLight.position.set(-7,8,5);
+  scene.add(blueLight);
 
-const littleFish=[];function tinyFish(color){const g=new THREE.Group(),b=new THREE.Mesh(new THREE.SphereGeometry(.15,9,7),mat(color,.35));b.scale.set(1.6,.65,.6);g.add(b);const t=new THREE.Mesh(new THREE.ConeGeometry(.15,.35,7),mat(color));t.position.x=-.27;t.rotation.z=Math.PI/2;g.add(t);g.userData={phase:Math.random()*6.28,radius:3+Math.random()*5,speed:.25+Math.random()*.25};scene.add(g);littleFish.push(g)}for(let i=0;i<9;i++)tinyFish(i%2?0x65dfff:0xffd27c);
+  const cyanLight = new THREE.PointLight(0x00ffd5,22,30);
+  cyanLight.position.set(8,3,-5);
+  scene.add(cyanLight);
 
-const bubbles=[];const bubbleGeo=new THREE.SphereGeometry(.045,7,6),bubbleMat=new THREE.MeshBasicMaterial({color:0xc8f7ff,transparent:true,opacity:.36});for(let i=0;i<48;i++){const b=new THREE.Mesh(bubbleGeo,bubbleMat);b.position.set((Math.random()-.5)*24,-5+Math.random()*12,(Math.random()-.5)*12);b.userData={speed:.35+Math.random()*.7,phase:Math.random()*6};scene.add(b);bubbles.push(b)}
+  createOceanFloor();
+  createRocks();
+  createRuins();
+  createCorals();
+  createPlants();
+  createSunRays();
+  createBubbles(85);
 
-function dropFood(){const cx=(Math.random()-.5)*3;for(let i=0;i<7;i++){const p=new THREE.Mesh(new THREE.SphereGeometry(.09,8,7),new THREE.MeshStandardMaterial({color:0xffc64b,emissive:0x6b3600,roughness:.4}));p.position.set(cx+(Math.random()-.5)*2,5.2,1+(Math.random()-.5)*2);p.userData={speed:1.2+Math.random()*.7,wobble:Math.random()*5};scene.add(p);foodMeshes.push(p)}foodTarget={x:cx,y:-2.2,z:1,time:performance.now()}}
-function animateFish(actor,time,delta){const p=time*actor.speed+actor.phase;let tx=Math.sin(p)*actor.radiusX,ty=actor.baseY+Math.sin(p*1.45)*actor.radiusY,tz=actor.baseZ+Math.cos(p*.8)*1.1;if(foodTarget&&performance.now()-foodTarget.time<5200){tx=foodTarget.x+actor.foodSide*1.05;ty=foodTarget.y+(actor.foodSide<0?.25:-.25);tz=foodTarget.z+.5}const oldX=actor.root.position.x,smooth=Math.min(1,delta*1.25);actor.root.position.x+=(tx-actor.root.position.x)*smooth;actor.root.position.y+=(ty-actor.root.position.y)*smooth;actor.root.position.z+=(tz-actor.root.position.z)*smooth;const dx=actor.root.position.x-oldX;if(Math.abs(dx)>.001)actor.facing=dx<0?-1:1;actor.root.rotation.y=actor.facing<0?Math.PI:0;actor.root.rotation.z=Math.sin(p*1.5)*.025;if(actor.mixer)actor.mixer.update(delta)}
+  loadFish('./jikin-goldfish%20%281%29.glb','Jikin Goldfish',-3,3.1,0.5,1.45);
+  loadFish('./betta-splendens%20%281%29.glb','Pearl Blue Betta',3,2.5,-1,1.15);
 
-let audioContext=null,masterGain=null,ambientGain=null,musicGain=null,soundEnabled=false;function noiseBuffer(ctx){const b=ctx.createBuffer(1,ctx.sampleRate*3,ctx.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*.32;return b}
-function startAmbient(){const ctx=audioContext,n=ctx.createBufferSource();n.buffer=noiseBuffer(ctx);n.loop=true;const f=ctx.createBiquadFilter();f.type='lowpass';f.frequency.value=420;const ng=ctx.createGain();ng.gain.value=.15;n.connect(f);f.connect(ng);ng.connect(ambientGain);n.start();const o=ctx.createOscillator(),og=ctx.createGain();o.type='sine';o.frequency.value=68;og.gain.value=.055;o.connect(og);og.connect(ambientGain);o.start();[110,164.81,220].forEach((hz,i)=>{const a=ctx.createOscillator(),g=ctx.createGain();a.type='sine';a.frequency.value=hz;g.gain.value=i===0?.025:.009;a.connect(g);g.connect(musicGain);a.start()})}
-function setVolume(){const v=Number(document.getElementById('volumeSlider').value)/100;document.getElementById('volumeValue').textContent=Math.round(v*100)+'%';if(masterGain&&audioContext)masterGain.gain.setTargetAtTime(v,audioContext.currentTime,.08)}
-async function enableSound(){try{if(!audioContext){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)throw new Error('Audio unsupported');audioContext=new AC();masterGain=audioContext.createGain();masterGain.gain.value=Number(document.getElementById('volumeSlider').value)/100;masterGain.connect(audioContext.destination);ambientGain=audioContext.createGain();ambientGain.gain.value=.7;ambientGain.connect(masterGain);musicGain=audioContext.createGain();musicGain.gain.value=.55;musicGain.connect(masterGain);startAmbient()}await audioContext.resume();soundEnabled=true;document.getElementById('soundButton').textContent='SOUND ON';document.getElementById('soundButton').classList.add('on');document.getElementById('soundNote').textContent='ရေအောက်သဘာဝအသံနဲ့ နူးညံ့တဲ့ Music ဖွင့်ထားပါတယ်။';setVolume()}catch(e){document.getElementById('soundNote').textContent='ဒီ Browser မှာ အသံဖွင့်လို့မရသေးပါ။';console.error(e)}}
-async function disableSound(){soundEnabled=false;if(audioContext)await audioContext.suspend();document.getElementById('soundButton').textContent='SOUND OFF';document.getElementById('soundButton').classList.remove('on');document.getElementById('soundNote').textContent='အသံပိတ်ထားပါတယ်။ ပြန်ဖွင့်ရန် SOUND ON ကိုနှိပ်ပါ။'}
-document.getElementById('soundButton').addEventListener('click',()=>soundEnabled?disableSound():enableSound());document.getElementById('volumeSlider').addEventListener('input',setVolume);
-function bubbleSound(){if(!soundEnabled||!audioContext)return;const c=audioContext,o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.setValueAtTime(520+Math.random()*350,c.currentTime);o.frequency.exponentialRampToValueAtTime(140,c.currentTime+.22);g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(.1,c.currentTime+.025);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+.25);o.connect(g);g.connect(masterGain);o.start();o.stop(c.currentTime+.27)}
-function feedingSound(){if(!soundEnabled)return;bubbleSound();setTimeout(bubbleSound,180);setTimeout(bubbleSound,430)}
-function feedFish(){if(feeding)return;if(food<=0){wish.textContent='အစာကုန်သွားပါပြီ။ Package တွေက Demo အတွက်သာ ဖြစ်ပါတယ်။';return}food--;updateBalance();feeding=true;dropFood();feedingSound();wish.textContent='🐠 အစာလေးတွေ ကျလာပြီ။ ငါးလေးတွေ အစာဆီကို ကူးလာနေပါပြီ။';setTimeout(()=>{feeding=false;wish.textContent='💙 ငါးလေးတွေ အစာစားပြီး ပျော်ရွှင်နေကြပါပြီ။'},3500)}
-document.getElementById('feedButton').addEventListener('click',feedFish);
-document.querySelectorAll('.package').forEach(btn=>btn.addEventListener('click',()=>{selectedPackage=Number(btn.dataset.amount);document.querySelectorAll('.package').forEach(b=>b.classList.toggle('active',b===btn));wish.textContent=selectedPackage.toLocaleString('en-US')+' MMK အစာ Package ကို ရွေးထားပါတယ်။ Demo အတွက်သာ ဖြစ်ပါတယ်။'}));
+  window.addEventListener('resize',onResize);
+  animate();
 
-function resize(){const w=shell.clientWidth,h=shell.clientHeight;if(!w||!h)return;camera.aspect=w/h;camera.updateProjectionMatrix();renderer.setSize(w,h,false)}window.addEventListener('resize',resize);resize();
-const clock=new THREE.Clock();let running=true;document.addEventListener('visibilitychange',()=>{running=!document.hidden;if(running)clock.getDelta()});
-function render(){requestAnimationFrame(render);if(!running)return;const delta=Math.min(clock.getDelta(),.04),time=clock.elapsedTime;fishActors.forEach(f=>animateFish(f,time,delta));littleFish.forEach(f=>{const d=f.userData,a=time*d.speed+d.phase;f.position.set(Math.sin(a)*d.radius,2+Math.sin(a*1.4)*1.2,-5+Math.cos(a)*1.8);f.rotation.y=Math.cos(a)>0?0:Math.PI});plants.forEach(p=>p.g.rotation.z=Math.sin(time*.75+p.phase)*.13);bubbles.forEach(b=>{b.position.y+=b.userData.speed*delta;b.position.x+=Math.sin(time+b.userData.phase)*.0015;if(b.position.y>7){b.position.y=-5.8;b.position.x=(Math.random()-.5)*24}});rays.forEach((r,i)=>{r.rotation.z=Math.sin(time*.22+i)*.09;r.material.opacity=.035+Math.sin(time*.55+i)*.014});glows.forEach(g=>{g.o.material.emissiveIntensity=1.2+Math.sin(time*1.5+g.phase)*.55;g.o.rotation.y+=delta*.25});for(let i=foodMeshes.length-1;i>=0;i--){const p=foodMeshes[i];p.position.y-=p.userData.speed*delta;p.position.x+=Math.sin(time*3+p.userData.wobble)*.004;if(p.position.y<-5.5){scene.remove(p);p.geometry.dispose();p.material.dispose();foodMeshes.splice(i,1)}}if(foodTarget&&performance.now()-foodTarget.time>5200)foodTarget=null;blueLight.position.x=7+Math.sin(time*.3)*2;reefLight.intensity=17+Math.sin(time*.7)*3;renderer.render(scene,camera)}
-try{render();}catch(e){statusText.textContent='3D ERROR';wish.textContent='3D စတင်ရာတွင် အမှားရှိနေပါတယ်။ Browser ကို ပြန်ဖွင့်ကြည့်ပါ။';console.error(e)}
+  setTimeout(()=>{
+    loading.classList.add('hide');
+    statusText.textContent='YOUR UNDERWATER WORLD IS READY';
+  },1200);
+}
+
+function createOceanFloor(){
+  const geo = new THREE.PlaneGeometry(100,100,30,30);
+  const mat = new THREE.MeshStandardMaterial({color:0x123e49,roughness:1});
+  const floor = new THREE.Mesh(geo,mat);
+  floor.rotation.x=-Math.PI/2;
+  floor.position.y=-1.2;
+  scene.add(floor);
+
+  const sand = new THREE.Mesh(
+    new THREE.CircleGeometry(35,64),
+    new THREE.MeshStandardMaterial({color:0x174957,roughness:1})
+  );
+  sand.rotation.x=-Math.PI/2;
+  sand.position.y=-1.17;
+  scene.add(sand);
+}
+
+function createRocks(){
+  for(let i=0;i<28;i++){
+    const radius=0.35+Math.random()*1.15;
+    const geo=new THREE.DodecahedronGeometry(radius,1);
+    const mat=new THREE.MeshStandardMaterial({
+      color:new THREE.Color().setHSL(0.52+Math.random()*0.08,0.35,0.16+Math.random()*0.12),
+      roughness:1
+    });
+    const rock=new THREE.Mesh(geo,mat);
+    rock.position.set((Math.random()-0.5)*27,-0.7+Math.random()*0.5,-7+Math.random()*-4);
+    rock.scale.y=0.55+Math.random()*0.7;
+    scene.add(rock);
+  }
+}
+
+function createRuins(){
+  const stoneMat=new THREE.MeshStandardMaterial({color:0x285866,roughness:0.9});
+  const glowMat=new THREE.MeshStandardMaterial({
+    color:0x126c79,emissive:0x087b91,emissiveIntensity:0.45,roughness:0.7
+  });
+
+  function pillar(x,z,height){
+    const base=new THREE.Mesh(new THREE.CylinderGeometry(.55,.7,.35,12),stoneMat);
+    base.position.set(x,-0.65,z);
+    scene.add(base);
+
+    const shaft=new THREE.Mesh(new THREE.CylinderGeometry(.32,.42,height,12),stoneMat);
+    shaft.position.set(x,-0.45+height/2,z);
+    scene.add(shaft);
+
+    const top=new THREE.Mesh(new THREE.BoxGeometry(1.05,.3,1.05),glowMat);
+    top.position.set(x,height-0.45,z);
+    scene.add(top);
+  }
+
+  pillar(-8,-8,5.2);
+  pillar(-5,-9,4.5);
+  pillar(6,-9,4.8);
+  pillar(9,-8,5.5);
+
+  const arch=new THREE.Mesh(
+    new THREE.TorusGeometry(2.5,.25,10,32,Math.PI),
+    stoneMat
+  );
+  arch.position.set(0,2,-10);
+  scene.add(arch);
+
+  const arch2=arch.clone();
+  arch2.scale.set(1.35,1.1,1);
+  arch2.position.set(-10,2,-13);
+  scene.add(arch2);
+}
+
+function createCorals(){
+  const colors=[0xff5b8d,0xffa45b,0x8e75ff,0x29e0c1,0xffd166];
+
+  for(let i=0;i<22;i++){
+    const group=new THREE.Group();
+    const color=colors[i%colors.length];
+    const material=new THREE.MeshStandardMaterial({
+      color,emissive:color,emissiveIntensity:0.17,roughness:.65
+    });
+
+    const height=.5+Math.random()*1.2;
+    for(let j=0;j<4;j++){
+      const branch=new THREE.Mesh(
+        new THREE.CylinderGeometry(.035,.12,height,7),
+        material
+      );
+      branch.position.set((Math.random()-.5)*.4,height*.35,0);
+      branch.rotation.z=(Math.random()-.5)*.9;
+      group.add(branch);
+
+      const tip=new THREE.Mesh(new THREE.SphereGeometry(.09,8,8),material);
+      tip.position.copy(branch.position);
+      tip.y+=height*.48;
+      group.add(tip);
+    }
+
+    group.position.set((Math.random()-.5)*23,-.9,-3-Math.random()*7);
+    scene.add(group);
+  }
+}
+
+function createPlants(){
+  for(let i=0;i<18;i++){
+    const group=new THREE.Group();
+    const mat=new THREE.MeshStandardMaterial({
+      color:i%2?0x16a58d:0x287e8d,
+      roughness:.8,
+      side:THREE.DoubleSide
+    });
+
+    for(let j=0;j<3;j++){
+      const leaf=new THREE.Mesh(new THREE.ConeGeometry(.22,2+Math.random()*1.5,7),mat);
+      leaf.position.set((j-1)*.25,1,0);
+      leaf.rotation.z=(j-1)*.25;
+      group.add(leaf);
+    }
+
+    group.position.set((Math.random()-.5)*24,-1,-2-Math.random()*7);
+    group.userData.phase=Math.random()*6;
+    scene.add(group);
+    plants.push(group);
+  }
+}
+
+function createSunRays(){
+  const rayMat=new THREE.MeshBasicMaterial({
+    color:0x70dfff,transparent:true,opacity:.055,side:THREE.DoubleSide,
+    depthWrite:false
+  });
+
+  for(let i=0;i<7;i++){
+    const ray=new THREE.Mesh(new THREE.PlaneGeometry(1.1,17),rayMat);
+    ray.position.set(-8+i*2.7,5,-5);
+    ray.rotation.z=(Math.random()-.5)*.18;
+    scene.add(ray);
+  }
+}
+
+function createBubbles(count){
+  const geo=new THREE.SphereGeometry(.045,8,8);
+  const mat=new THREE.MeshBasicMaterial({color:0x9ceeff,transparent:true,opacity:.55});
+
+  for(let i=0;i<count;i++){
+    const bubble=new THREE.Mesh(geo,mat);
+    bubble.position.set((Math.random()-.5)*25,Math.random()*9-1,(Math.random()-.5)*12-3);
+    bubble.scale.setScalar(.5+Math.random()*1.5);
+    bubble.userData.speed=.3+Math.random()*.8;
+    bubble.userData.offset=Math.random()*6;
+    scene.add(bubble);
+    bubbles.push(bubble);
+  }
+}
+
+function createFallbackFish(color,accent){
+  const group=new THREE.Group();
+
+  const bodyMat=new THREE.MeshStandardMaterial({
+    color,metalness:.25,roughness:.28
+  });
+  const accentMat=new THREE.MeshStandardMaterial({
+    color:accent,metalness:.3,roughness:.3
+  });
+
+  const body=new THREE.Mesh(new THREE.SphereGeometry(.75,24,18),bodyMat);
+  body.scale.set(1.35,.72,.65);
+  group.add(body);
+
+  const tail=new THREE.Mesh(new THREE.ConeGeometry(.55,.95,4),accentMat);
+  tail.rotation.z=-Math.PI/2;
+  tail.position.x=-1.25;
+  group.add(tail);
+
+  const fin=new THREE.Mesh(new THREE.ConeGeometry(.35,.75,5),accentMat);
+  fin.position.set(-.15,.65,0);
+  fin.rotation.z=.3;
+  group.add(fin);
+
+  const eyeMat=new THREE.MeshBasicMaterial({color:0x050b16});
+  const eye=new THREE.Mesh(new THREE.SphereGeometry(.075,10,10),eyeMat);
+  eye.position.set(.72,.18,.42);
+  group.add(eye);
+
+  return group;
+}
+
+function loadFish(url,name,x,y,z,scale){
+  const loader=new GLTFLoader();
+
+  loader.load(
+    url,
+    (gltf)=>{
+      const model=gltf.scene;
+      model.scale.setScalar(scale);
+      model.position.set(x,y,z);
+      model.traverse(obj=>{
+        if(obj.isMesh){
+          obj.castShadow=false;
+          obj.receiveShadow=false;
+        }
+      });
+      scene.add(model);
+
+      fish.push({
+        object:model,
+        name,
+        baseX:x,baseY:y,baseZ:z,
+        phase:Math.random()*6,
+        speed:.45+Math.random()*.3,
+        mixer:gltf.animations.length?new THREE.AnimationMixer(model):null,
+        foodTarget:null,
+        fallback:false
+      });
+
+      if(gltf.animations.length){
+        const mixer=new THREE.AnimationMixer(model);
+        gltf.animations.forEach(clip=>mixer.clipAction(clip).play());
+        fish[fish.length-1].mixer=mixer;
+      }
+
+      updateFishCount();
+    },
+    undefined,
+    (error)=>{
+      console.warn('Could not load fish model:',name,error);
+      const fallback=createFallbackFish(
+        name==='Jikin Goldfish'?0xe9e9e9:0x176bff,
+        name==='Jikin Goldfish'?0xe83b46:0x6c38ff
+      );
+      fallback.position.set(x,y,z);
+      fallback.scale.setScalar(scale);
+      scene.add(fallback);
+
+      fish.push({
+        object:fallback,name,
+        baseX:x,baseY:y,baseZ:z,
+        phase:Math.random()*6,
+        speed:.45+Math.random()*.3,
+        mixer:null,
+        foodTarget:null,
+        fallback:true
+      });
+      updateFishCount();
+    }
+  );
+}
+
+function updateFishCount(){
+  document.getElementById('fishCount').textContent=fish.length;
+}
+
+function dropFood(){
+  const geo=new THREE.SphereGeometry(.09,8,8);
+  const mat=new THREE.MeshStandardMaterial({
+    color:0xffd36a,emissive:0x8a4b08,emissiveIntensity:.3
+  });
+
+  for(let i=0;i<7;i++){
+    const pellet=new THREE.Mesh(geo,mat);
+    pellet.position.set((Math.random()-.5)*2,7+Math.random()*1.5,(Math.random()-.5)*2);
+    pellet.userData.speed=1.1+Math.random()*.8;
+    pellet.userData.life=9;
+    scene.add(pellet);
+    foodPellets.push(pellet);
+  }
+
+  fish.forEach(f=>f.foodTarget=true);
+}
+
+function playTone(freq=550,duration=.12){
+  if(!soundOn)return;
+  try{
+    audioContext=audioContext||new (window.AudioContext||window.webkitAudioContext)();
+    const osc=audioContext.createOscillator();
+    const gain=audioContext.createGain();
+    osc.frequency.value=freq;
+    gain.gain.value=volume*.08;
+    osc.connect(gain);
+    gain.connect(audioContext.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+duration);
+    osc.stop(audioContext.currentTime+duration);
+  }catch(e){console.warn('Audio unavailable',e)}
+}
+
+function animate(){
+  requestAnimationFrame(animate);
+  const delta=Math.min(clock.getDelta(),.05);
+  const t=clock.elapsedTime;
+
+  fish.forEach((f,i)=>{
+    if(f.mixer)f.mixer.update(delta);
+
+    const targetX=f.foodTarget&&foodPellets.length
+      ?foodPellets[0].position.x
+      :f.baseX+Math.sin(t*f.speed+f.phase)*2.1;
+
+    const targetY=f.foodTarget&&foodPellets.length
+      ?Math.max(0,foodPellets[0].position.y-.5)
+      :f.baseY+Math.sin(t*1.2+f.phase)*.55;
+
+    f.object.position.x+=(targetX-f.object.position.x)*delta*.55;
+    f.object.position.y+=(targetY-f.object.position.y)*delta*.5;
+    f.object.position.z=f.baseZ+Math.sin(t*.7+f.phase)*.65;
+
+    const direction=targetX-f.object.position.x;
+    if(Math.abs(direction)>.08){
+      f.object.rotation.y=direction>0?0:Math.PI;
+    }
+
+    if(f.fallback){
+      f.object.rotation.z=Math.sin(t*3+f.phase)*.06;
+      if(f.object.children[1]){
+        f.object.children[1].rotation.y=Math.sin(t*8+f.phase)*.3;
+      }
+    }
+  });
+
+  bubbles.forEach(b=>{
+    b.position.y+=b.userData.speed*delta;
+    b.position.x+=Math.sin(t+b.userData.offset)*delta*.12;
+    if(b.position.y>10){
+      b.position.y=-1.5;
+      b.position.x=(Math.random()-.5)*25;
+    }
+  });
+
+  foodPellets=foodPellets.filter(p=>{
+    p.position.y-=p.userData.speed*delta;
+    p.position.x+=Math.sin(t*2+p.position.z)*delta*.15;
+    p.userData.life-=delta;
+    if(p.position.y<-.7||p.userData.life<=0){
+      scene.remove(p);
+      p.geometry.dispose();
+      return false;
+    }
+    return true;
+  });
+
+  if(foodPellets.length===0){
+    fish.forEach(f=>f.foodTarget=false);
+    feeding=false;
+  }
+
+  plants.forEach(p=>{
+    p.rotation.z=Math.sin(t*.8+p.userData.phase)*.055;
+  });
+
+  camera.position.x=Math.sin(t*.12)*.35;
+  camera.lookAt(0,2,0);
+
+  renderer.render(scene,camera);
+}
+
+function onResize(){
+  camera.aspect=innerWidth/innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));
+}
+
+document.getElementById('feedBtn').addEventListener('click',()=>{
+  if(foodBalance<=0){
+    showMessage('Not enough food! Please get more food.');
+    playTone(220,.2);
+    return;
+  }
+  if(feeding)return;
+
+  foodBalance--;
+  updateFood();
+  feeding=true;
+  dropFood();
+  playTone(620,.15);
+  statusText.textContent='YUMMY! YOUR FISH ARE EATING';
+});
+
+document.getElementById('soundBtn').addEventListener('click',()=>{
+  soundOn=!soundOn;
+  document.getElementById('soundBtn').textContent=soundOn?'🔊':'🔇';
+  if(soundOn)playTone(520,.12);
+});
+
+document.getElementById('volume').addEventListener('input',e=>{
+  volume=Number(e.target.value)/100;
+  document.getElementById('volumeValue').textContent=e.target.value+'%';
+});
+
+document.querySelectorAll('.package button').forEach(button=>{
+  button.addEventListener('click',()=>{
+    const amount=button.dataset.food;
+    const price=button.dataset.price;
+    showMessage(`Selected ${amount} FOOD — ${Number(price).toLocaleString()} MMK. Payment integration is not active yet.`);
+  });
+});
+
+window.addEventListener('error',e=>{
+  console.error('App error:',e.message);
+  statusText.textContent='WORLD ERROR — CHECK CONNECTION';
+});
+
+window.addEventListener('unhandledrejection',e=>{
+  console.error('App promise error:',e.reason);
+  statusText.textContent='SOME 3D ASSETS COULD NOT LOAD';
+});
+
+try{
+  init();
+}catch(error){
+  console.error('World initialization failed:',error);
+  loading.textContent='WORLD FAILED TO START';
+  statusText.textContent='PLEASE RELOAD THE APP';
+}
 </script>
 </body>
 </html>
