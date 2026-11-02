@@ -23,19 +23,31 @@ body{overflow-x:hidden}
 #ocean{position:absolute;inset:0;width:100%;height:100%;display:block}
 .scene-label{position:absolute;z-index:3;top:14px;left:0;right:0;text-align:center;pointer-events:none;color:#c7f6ff;text-shadow:0 2px 10px #001b35;letter-spacing:2px;font-size:10px}
 .scene-hint{position:absolute;z-index:3;bottom:12px;left:0;right:0;text-align:center;font-size:10px;color:#c4efff99;text-shadow:0 1px 5px #001}
+.status{position:absolute;z-index:4;top:40px;right:12px;padding:6px 9px;border-radius:20px;background:#001c35aa;border:1px solid #72dfff55;color:#c9f8ff;font-size:9px}
 .controls{margin-top:14px;padding:16px;border:1px solid #61dfff55;border-radius:18px;background:linear-gradient(145deg,#092e4c,#061b31);box-shadow:0 12px 30px #0005}
 .controls h2{margin:0 0 12px;color:#a9f0ff;font-size:17px}
 .feed-button{width:100%;padding:15px;border:0;border-radius:13px;color:#06213a;background:linear-gradient(90deg,#8beaff,#f5d68a);font-size:16px;font-weight:bold;cursor:pointer}
-.feed-button:active,.package:active{transform:scale(.98)}
+.feed-button:active,.package:active,.sound-button:active{transform:scale(.98)}
 .packages{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
 .package{padding:12px 4px;border:1px solid #6adfff66;border-radius:12px;color:#fff;background:#0b3858;cursor:pointer;font-size:12px}
 .package.active{border-color:#ffe18b;background:#26516a;box-shadow:0 0 12px #ffe18b55}
 .package strong{display:block;color:#ffe18b;margin-bottom:5px;font-size:12px}
+.sound-panel{margin-top:14px;padding:13px;border:1px solid #64dfff55;border-radius:14px;background:#041b30}
+.sound-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.sound-title{font-size:14px;color:#b9efff;font-weight:bold}
+.sound-button{border:1px solid #74e5ff88;border-radius:20px;padding:9px 15px;color:#d8faff;background:#0b4565;font-weight:bold;cursor:pointer}
+.sound-button.on{background:#176d68;border-color:#70ffcf;color:#caffed}
+.volume-row{display:flex;align-items:center;gap:10px;margin-top:12px;color:#a9d9e9;font-size:12px}
+.volume-row input{flex:1;accent-color:#6deaff}
+.sound-note{margin-top:8px;color:#789fb5;font-size:10px;line-height:1.5}
 .wish{min-height:42px;margin-top:14px;text-align:center;color:#c2eafa;font-size:13px;line-height:1.8}
 .notice{margin-top:13px;color:#8caec2;font-size:10px;text-align:center;line-height:1.7}
 .credit{margin-top:9px;color:#8caec2;font-size:9px;text-align:center}
-.status{position:absolute;z-index:4;top:40px;right:12px;padding:6px 9px;border-radius:20px;background:#001c35aa;border:1px solid #72dfff55;color:#c9f8ff;font-size:9px}
-@media(max-width:380px){.app{padding-left:9px;padding-right:9px}.scene-shell{min-height:460px}.balance-card{padding:10px}}
+@media(max-width:380px){
+ .app{padding-left:9px;padding-right:9px}
+ .scene-shell{min-height:460px}
+ .balance-card{padding:10px}
+}
 </style>
 </head>
 
@@ -84,6 +96,21 @@ body{overflow-x:hidden}
     </button>
   </div>
 
+  <div class="sound-panel">
+    <div class="sound-top">
+      <div class="sound-title">🔊 UNDERWATER SOUND</div>
+      <button class="sound-button" id="soundButton" type="button">SOUND OFF</button>
+    </div>
+    <div class="volume-row">
+      <span>အသံ</span>
+      <input id="volumeSlider" type="range" min="0" max="100" value="45">
+      <span id="volumeValue">45%</span>
+    </div>
+    <div class="sound-note" id="soundNote">
+      ရေအောက်သဘာဝအသံ၊ နူးညံ့တဲ့ Music နဲ့ အစာကျွေးသံများ
+    </div>
+  </div>
+
   <div class="wish" id="wish">
     🌊 ရေအောက်ကမ္ဘာလေးထဲကို ကြိုဆိုပါတယ်။<br>
     ငါးလေးတွေနဲ့ အချိန်လေးကို ပျော်ရွှင်စွာ ဖြတ်သန်းပါ။
@@ -100,144 +127,131 @@ body{overflow-x:hidden}
 import * as THREE from
 "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js";
 
-/* ---------------------------------
-   LUCKY OCEAN 3D ENGINE
----------------------------------- */
+/* LUCKY OCEAN 3D ENGINE */
 
-const canvas = document.getElementById("ocean");
-const shell = document.querySelector(".scene-shell");
-const statusText = document.getElementById("renderStatus");
-const wish = document.getElementById("wish");
-const foodBalance = document.getElementById("foodBalance");
+const canvas=document.getElementById("ocean");
+const shell=document.querySelector(".scene-shell");
+const statusText=document.getElementById("renderStatus");
+const wish=document.getElementById("wish");
+const foodBalance=document.getElementById("foodBalance");
 
-let food = Number(localStorage.getItem("luckyOceanFood"));
-if (!Number.isFinite(food) || food < 0) food = 10;
+let food=Number(localStorage.getItem("luckyOceanFood"));
+if(!Number.isFinite(food)||food<0) food=10;
 
-let selectedPackage = 1000;
-let feeding = false;
-const foodTargets = [];
+let selectedPackage=1000;
+let feeding=false;
+const foodMeshes=[];
+let foodTarget=null;
 
 function updateBalance(){
-  foodBalance.textContent = food;
-  localStorage.setItem("luckyOceanFood", String(food));
+  foodBalance.textContent=food;
+  localStorage.setItem("luckyOceanFood",String(food));
 }
 updateBalance();
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x032b4a);
-scene.fog = new THREE.FogExp2(0x063957, 0.025);
+/* SCENE */
 
-const camera = new THREE.PerspectiveCamera(
-  48, 1, 0.1, 120
-);
-camera.position.set(0, 1.2, 22);
-camera.lookAt(0, 0, 0);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x032b4a);
+scene.fog=new THREE.FogExp2(0x063957,0.022);
 
-const renderer = new THREE.WebGLRenderer({
+const camera=new THREE.PerspectiveCamera(48,1,0.1,120);
+camera.position.set(0,1.2,22);
+camera.lookAt(0,0,0);
+
+const renderer=new THREE.WebGLRenderer({
   canvas,
-  antialias: false,
-  alpha: false,
-  powerPreference: "low-power"
+  antialias:false,
+  alpha:false,
+  powerPreference:"low-power"
 });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.15;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.2;
 
-/* LIGHTS */
-
-scene.add(new THREE.HemisphereLight(0x9deaff, 0x062238, 2.0));
-
-const sun = new THREE.DirectionalLight(0xc4f6ff, 2.4);
-sun.position.set(-7, 12, 8);
-scene.add(sun);
-
-const blueLight = new THREE.PointLight(0x16bfff, 35, 35);
-blueLight.position.set(7, 4, 3);
-scene.add(blueLight);
-
-const reefLight = new THREE.PointLight(0x27e7cb, 18, 24);
-reefLight.position.set(-8, -3, 2);
-scene.add(reefLight);
-
-/* MATERIAL HELPERS */
-
-function material(color, roughness=0.7, metalness=0){
+function mat(color,roughness=.7,metalness=0){
   return new THREE.MeshStandardMaterial({
-    color,
-    roughness,
-    metalness
+    color,roughness,metalness
   });
 }
 
-const waterBlue = material(0x075477,0.35);
-const darkRock = material(0x203d50);
-const sandMat = material(0xb7a77c);
-const greenMat = material(0x137c65);
-const coralPink = material(0xf07878);
-const coralOrange = material(0xffa45e);
-const coralPurple = material(0x9a76c9);
+/* LIGHTS */
 
-/* UNDERWATER BACKGROUND */
+scene.add(new THREE.HemisphereLight(0xa7eaff,0x062238,2.0));
 
-const seabed = new THREE.Mesh(
-  new THREE.PlaneGeometry(60, 35),
-  material(0x06354a)
+const sun=new THREE.DirectionalLight(0xc4f6ff,2.5);
+sun.position.set(-7,12,8);
+scene.add(sun);
+
+const blueLight=new THREE.PointLight(0x16bfff,35,35);
+blueLight.position.set(7,4,3);
+scene.add(blueLight);
+
+const reefLight=new THREE.PointLight(0x27e7cb,18,24);
+reefLight.position.set(-8,-3,2);
+scene.add(reefLight);
+
+/* OCEAN FLOOR */
+
+const seabed=new THREE.Mesh(
+  new THREE.PlaneGeometry(60,35),
+  mat(0x06354a)
 );
-seabed.rotation.x = -Math.PI/2;
+seabed.rotation.x=-Math.PI/2;
 seabed.position.set(0,-6,-5);
 scene.add(seabed);
 
-const sand = new THREE.Mesh(
-  new THREE.BoxGeometry(60,0.45,22),
-  sandMat
+const sand=new THREE.Mesh(
+  new THREE.BoxGeometry(60,.45,22),
+  mat(0xb7a77c)
 );
 sand.position.set(0,-6.4,-3);
 scene.add(sand);
 
-/* DISTANT UNDERWATER CITY */
+/* DISTANT LOST CITY */
 
-const city = new THREE.Group();
+const city=new THREE.Group();
 scene.add(city);
 
 function addColumn(x,y,z,height,radius){
-  const column = new THREE.Mesh(
-    new THREE.CylinderGeometry(radius,radius*1.2,height,8),
-    material(0x39758a,0.65,0.25)
+  const column=new THREE.Mesh(
+    new THREE.CylinderGeometry(radius,radius*1.2,height,9),
+    mat(0x39758a,.65,.25)
   );
   column.position.set(x,y+height/2,z);
   city.add(column);
 
-  const cap = new THREE.Mesh(
-    new THREE.BoxGeometry(radius*3,0.35,radius*3),
-    material(0x70b6c0,0.5,0.3)
+  const cap=new THREE.Mesh(
+    new THREE.BoxGeometry(radius*3,.35,radius*3),
+    mat(0x70b6c0,.5,.3)
   );
   cap.position.set(x,y+height,z);
   city.add(cap);
 }
 
 for(let i=0;i<5;i++){
-  const x=-13+i*6.5;
-  const h=3.5+(i%2)*2;
-  addColumn(x,-4.7,-11,h,0.38);
+  addColumn(-13+i*6.5,-4.7,-11,3.5+(i%2)*2,.38);
 }
 
-const cityArch = new THREE.Mesh(
-  new THREE.TorusGeometry(3.2,0.28,8,32,Math.PI),
-  material(0x4d91a4,0.55,0.3)
+const arch=new THREE.Mesh(
+  new THREE.TorusGeometry(3.2,.28,8,32,Math.PI),
+  mat(0x4d91a4,.55,.3)
 );
-cityArch.position.set(0,-1.5,-11);
-cityArch.rotation.z=Math.PI;
-city.add(cityArch);
+arch.position.set(0,-1.5,-11);
+arch.rotation.z=Math.PI;
+city.add(arch);
 
-const cityGlow = new THREE.PointLight(0x28bfff,12,24);
-cityGlow.position.set(0,1,-9);
-scene.add(cityGlow);
+const cityLight=new THREE.PointLight(0x28bfff,12,24);
+cityLight.position.set(0,1,-9);
+scene.add(cityLight);
 
 /* ROCKS */
 
+const darkRock=mat(0x203d50);
+
 function addRock(x,y,z,sx,sy,sz){
-  const rock = new THREE.Mesh(
+  const rock=new THREE.Mesh(
     new THREE.DodecahedronGeometry(1,1),
     darkRock
   );
@@ -248,52 +262,64 @@ function addRock(x,y,z,sx,sy,sz){
 }
 
 for(let i=0;i<24;i++){
-  const x=(Math.random()-0.5)*25;
-  const z=-5+Math.random()*7;
-  const y=-5.4+Math.random()*0.8;
-  addRock(x,y,z,0.5+Math.random()*1.2,0.35+Math.random()*0.7,0.5+Math.random());
+  addRock(
+    (Math.random()-.5)*25,
+    -5.4+Math.random()*.8,
+    -5+Math.random()*7,
+    .5+Math.random()*1.2,
+    .35+Math.random()*.7,
+    .5+Math.random()
+  );
 }
 
-/* CORAL BRANCHES */
+/* CORAL */
 
-function addBranch(group, start, end, radius, mat){
+function addBranch(group,start,end,radius,material){
   const a=new THREE.Vector3(...start);
   const b=new THREE.Vector3(...end);
-  const direction=new THREE.Vector3().subVectors(b,a);
+  const dir=new THREE.Vector3().subVectors(b,a);
+
   const mesh=new THREE.Mesh(
-    new THREE.CylinderGeometry(radius*0.55,radius,direction.length(),7),
-    mat
+    new THREE.CylinderGeometry(radius*.55,radius,dir.length(),8),
+    material
   );
-  mesh.position.copy(a).add(b).multiplyScalar(0.5);
+  mesh.position.copy(a).add(b).multiplyScalar(.5);
   mesh.quaternion.setFromUnitVectors(
     new THREE.Vector3(0,1,0),
-    direction.normalize()
+    dir.normalize()
   );
   group.add(mesh);
 }
 
-function makeCoral(x,z,mat,scale=1){
+function makeCoral(x,z,color,scale=1){
   const group=new THREE.Group();
   group.position.set(x,-5.6,z);
   group.scale.setScalar(scale);
   scene.add(group);
 
-  for(let i=0;i<5;i++){
-    const h=0.7+Math.random()*1.4;
-    const side=(Math.random()-0.5)*1.5;
-    addBranch(group,[0,0,0],[side,h,0],0.17,mat);
-    addBranch(group,[side,h,0],[side*1.6,h+0.5,0],0.11,mat);
+  const coralMat=mat(color,.42,.08);
+
+  for(let i=0;i<6;i++){
+    const h=.7+Math.random()*1.4;
+    const side=(Math.random()-.5)*1.5;
+    addBranch(group,[0,0,0],[side,h,0],.17,coralMat);
+    addBranch(group,[side,h,0],[side*1.6,h+.5,0],.11,coralMat);
   }
 }
 
-makeCoral(-9,-1,coralPink,1.1);
-makeCoral(-5,-2,coralPurple,0.8);
-makeCoral(7,-1,coralOrange,1.2);
-makeCoral(10,-2,coralPurple,0.85);
+makeCoral(-9,-1,0xf07878,1.1);
+makeCoral(-5,-2,0x9a76c9,.8);
+makeCoral(7,-1,0xffa45e,1.2);
+makeCoral(10,-2,0x9a76c9,.85);
 
-/* SWAYING SEA PLANTS */
+/* SEA PLANTS */
 
 const plants=[];
+const plantMaterials=[
+  mat(0x168b68,.5),
+  mat(0x25aa79,.5),
+  mat(0x116b62,.5)
+];
 
 function makePlant(x,z,height){
   const group=new THREE.Group();
@@ -301,181 +327,254 @@ function makePlant(x,z,height){
   scene.add(group);
 
   const stem=new THREE.Mesh(
-    new THREE.CylinderGeometry(0.045,0.09,height,7),
-    greenMat
+    new THREE.CylinderGeometry(.045,.09,height,7),
+    plantMaterials[0]
   );
   stem.position.y=height/2;
   group.add(stem);
 
   for(let i=0;i<7;i++){
     const leaf=new THREE.Mesh(
-      new THREE.SphereGeometry(0.38,8,6),
-      material(i%2?0x168b68:0x25aa79)
+      new THREE.SphereGeometry(.38,9,7),
+      plantMaterials[i%3]
     );
-    leaf.scale.set(0.35,1.4,0.16);
+    leaf.scale.set(.35,1.4,.16);
     leaf.position.set(
-      Math.sin(i*1.7)*0.38,
-      0.4+i*height/9,
+      Math.sin(i*1.7)*.38,
+      .4+i*height/9,
       0
     );
-    leaf.rotation.z=(i%2?-.55:.55);
+    leaf.rotation.z=i%2?-.55:.55;
     group.add(leaf);
   }
+
   plants.push({group,phase:Math.random()*6});
 }
 
 for(let i=0;i<13;i++){
-  makePlant(-12+i*2, -2+Math.random()*3, 2+Math.random()*2.5);
+  makePlant(-12+i*2,-2+Math.random()*3,2+Math.random()*2.5);
 }
 
-/* LIGHT RAYS */
+/* SUNLIGHT RAYS */
 
 const rays=[];
 
 for(let i=0;i<7;i++){
   const ray=new THREE.Mesh(
-    new THREE.CylinderGeometry(0.15,2.1,17,12,1,true),
+    new THREE.CylinderGeometry(.15,2.1,17,12,1,true),
     new THREE.MeshBasicMaterial({
       color:0x9ceeff,
       transparent:true,
-      opacity:0.055,
+      opacity:.05,
       side:THREE.DoubleSide,
       depthWrite:false
     })
   );
   ray.position.set(-9+i*3,4,-3);
-  ray.rotation.z=(Math.random()-0.5)*0.22;
+  ray.rotation.z=(Math.random()-.5)*.22;
   scene.add(ray);
   rays.push(ray);
 }
 
-/* REAL PROCEDURAL 3D FISH
-   No fish photographs or flat image sprites.
----------------------------------- */
+/* FIN SHAPE */
 
-function createFin(color, shapeType="tail"){
+function createFin(color,type="tail"){
   const shape=new THREE.Shape();
 
-  if(shapeType==="tail"){
+  if(type==="tail"){
     shape.moveTo(0,0);
-    shape.quadraticCurveTo(-0.35,0.55,-0.95,0.62);
-    shape.quadraticCurveTo(-0.7,0.08,-1.05,0);
-    shape.quadraticCurveTo(-0.7,-0.08,-0.95,-0.62);
-    shape.quadraticCurveTo(-0.35,-0.55,0,0);
-  }else if(shapeType==="dorsal"){
-    shape.moveTo(-0.3,0);
-    shape.quadraticCurveTo(-0.4,0.5,0.2,0.65);
-    shape.quadraticCurveTo(0.65,0.35,0.5,0);
-    shape.lineTo(-0.3,0);
+    shape.quadraticCurveTo(-.35,.55,-.95,.62);
+    shape.quadraticCurveTo(-.7,.08,-1.05,0);
+    shape.quadraticCurveTo(-.7,-.08,-.95,-.62);
+    shape.quadraticCurveTo(-.35,-.55,0,0);
+  }else if(type==="dorsal"){
+    shape.moveTo(-.3,0);
+    shape.quadraticCurveTo(-.4,.5,.2,.65);
+    shape.quadraticCurveTo(.65,.35,.5,0);
+    shape.lineTo(-.3,0);
   }else{
     shape.moveTo(0,0);
-    shape.quadraticCurveTo(-0.2,0.5,0.5,0.65);
-    shape.quadraticCurveTo(0.45,0.1,0,0);
+    shape.quadraticCurveTo(-.2,.5,.5,.65);
+    shape.quadraticCurveTo(.45,.1,0,0);
   }
 
-  const geometry=new THREE.ShapeGeometry(shape,12);
-  const mesh=new THREE.Mesh(
+  const geometry=new THREE.ShapeGeometry(shape,16);
+
+  return new THREE.Mesh(
     geometry,
     new THREE.MeshStandardMaterial({
       color,
-      roughness:0.38,
+      roughness:.35,
       side:THREE.DoubleSide,
       transparent:true,
-      opacity:0.94
+      opacity:.95
     })
   );
-  return mesh;
 }
+
+/* FISH DETAILS */
+
+function addFishScales(group,isGold){
+  const scaleMat=mat(
+    isGold?0xffd77b:0x8bdfff,
+    .32,
+    .18
+  );
+
+  const scaleGeometry=new THREE.SphereGeometry(.045,7,6);
+  const scales=new THREE.InstancedMesh(
+    scaleGeometry,
+    scaleMat,
+    54
+  );
+
+  const dummy=new THREE.Object3D();
+  let index=0;
+
+  for(const side of [-1,1]){
+    for(let row=0;row<6;row++){
+      for(let col=0;col<4;col++){
+        const x=-.48+col*.27+(row%2)*.1;
+        const y=-.35+row*.13;
+        const bodyWidth=isGold?.64:.48;
+        const bodyLength=isGold?1.05:1.1;
+        const nx=x/bodyLength;
+        const ny=y/bodyWidth;
+        const inside=Math.max(.05,1-nx*nx-ny*ny);
+        const z=side*(isGold?.42:.36)*Math.sqrt(inside);
+
+        dummy.position.set(x,y,z);
+        dummy.scale.set(.9,1,.28);
+        dummy.updateMatrix();
+        scales.setMatrixAt(index++,dummy.matrix);
+      }
+    }
+  }
+
+  scales.count=index;
+  group.add(scales);
+}
+
+function addGill(group,color){
+  const points=[
+    new THREE.Vector3(.12,.24,.35),
+    new THREE.Vector3(-.02,.08,.42),
+    new THREE.Vector3(-.04,-.1,.42),
+    new THREE.Vector3(.08,-.25,.35)
+  ];
+
+  const curve=new THREE.CatmullRomCurve3(points);
+  const line=new THREE.Mesh(
+    new THREE.TubeGeometry(curve,16,.018,5,false),
+    mat(color,.45)
+  );
+  group.add(line);
+}
+
+/* PROCEDURAL 3D FISH */
 
 function createFish(type){
   const group=new THREE.Group();
-
   const isGold=type==="gold";
+
   const bodyColor=isGold?0xffa72e:0x167bd5;
   const finColor=isGold?0xffc45b:0x53baff;
+
   const bodyMat=new THREE.MeshStandardMaterial({
     color:bodyColor,
-    roughness:0.3,
-    metalness:0.12
+    roughness:.3,
+    metalness:.12
   });
 
-  /* Main rounded body */
   const body=new THREE.Mesh(
-    new THREE.SphereGeometry(1,24,18),
+    new THREE.SphereGeometry(1,32,24),
     bodyMat
   );
+
   body.scale.set(
     isGold?1.05:1.1,
-    isGold?0.64:0.48,
-    isGold?0.42:0.36
+    isGold?.64:.48,
+    isGold?.42:.36
   );
   group.add(body);
 
-  /* Face / eyes */
+  /* Face and eyes */
   for(const side of [-1,1]){
     const eyeWhite=new THREE.Mesh(
-      new THREE.SphereGeometry(0.105,12,10),
-      material(0xffffff,0.25)
+      new THREE.SphereGeometry(.105,14,12),
+      mat(0xffffff,.2)
     );
-    eyeWhite.position.set(0.63,0.13,side*0.34);
+    eyeWhite.position.set(.63,.13,side*.34);
     group.add(eyeWhite);
 
     const pupil=new THREE.Mesh(
-      new THREE.SphereGeometry(0.055,10,8),
-      material(0x061321,0.15)
+      new THREE.SphereGeometry(.055,12,10),
+      mat(0x061321,.15)
     );
-    pupil.position.set(0.68,0.13,side*0.405);
+    pupil.position.set(.68,.13,side*.405);
     group.add(pupil);
   }
 
-  /* Tail pivot: this moves independently */
+  /* Small mouth */
+  const mouth=new THREE.Mesh(
+    new THREE.SphereGeometry(.075,10,8),
+    mat(isGold?0xd96b24:0x07518d,.5)
+  );
+  mouth.scale.set(.8,.45,.5);
+  mouth.position.set(1.02,-.04,0);
+  group.add(mouth);
+
+  /* Gills and scale details */
+  addGill(group,isGold?0xd87925:0x075ba8);
+  addFishScales(group,isGold);
+
+  /* Tail pivot */
   const tailPivot=new THREE.Group();
-  tailPivot.position.x=-0.82;
+  tailPivot.position.x=-.82;
   group.add(tailPivot);
 
   const tail=createFin(finColor,"tail");
   tail.scale.set(
-    isGold?0.85:1.2,
-    isGold?0.9:1.3,
+    isGold?.85:1.2,
+    isGold?.9:1.3,
     1
   );
   tailPivot.add(tail);
 
   /* Dorsal fin */
   const dorsal=createFin(finColor,"dorsal");
-  dorsal.position.set(-0.15,0.42,0);
-  dorsal.scale.set(0.8,0.8,1);
+  dorsal.position.set(-.15,.42,0);
+  dorsal.scale.set(.8,.8,1);
   group.add(dorsal);
 
   /* Lower fin */
   const lower=createFin(finColor,"dorsal");
-  lower.position.set(-0.25,-0.4,0);
+  lower.position.set(-.25,-.4,0);
   lower.rotation.z=Math.PI;
-  lower.scale.set(0.7,0.6,1);
+  lower.scale.set(.7,.6,1);
   group.add(lower);
 
   /* Side fins */
   const sideFins=[];
+
   for(const side of [-1,1]){
     const fin=createFin(finColor,"side");
-    fin.position.set(0.1,-0.12,side*0.3);
-    fin.scale.set(0.55,0.65,1);
+    fin.position.set(.1,-.12,side*.3);
+    fin.scale.set(.55,.65,1);
     group.add(fin);
     sideFins.push(fin);
   }
 
-  /* Extra flowing fins for betta */
-  let flowing=[];
+  /* Betta flowing fins */
+  const flowing=[];
+
   if(!isGold){
     for(let i=0;i<3;i++){
-      const f=createFin(
-        i%2?0x9a78ff:0x4acfff,
-        "tail"
-      );
-      f.position.set(-0.8,0,(i-1)*0.12);
-      f.scale.set(0.7+i*0.12,0.8+i*0.15,1);
-      tailPivot.add(f);
-      flowing.push(f);
+      const fin=createFin(i%2?0x9a78ff:0x4acfff,"tail");
+      fin.position.set(-.8,0,(i-1)*.12);
+      fin.scale.set(.7+i*.12,.8+i*.15,1);
+      tailPivot.add(fin);
+      flowing.push(fin);
     }
   }
 
@@ -485,11 +584,12 @@ function createFish(type){
     sideFins,
     flowing,
     phase:Math.random()*6.28,
-    speed:isGold?0.8:1.0,
+    speed:isGold?.8:1,
     baseY:isGold?1.1:-1.1,
     baseZ:isGold?1.5:-1.5,
     radiusX:isGold?7.5:8.5,
-    radiusY:isGold?2.5:2.2
+    radiusY:isGold?2.5:2.2,
+    facing:1
   };
 
   scene.add(group);
@@ -500,33 +600,35 @@ const goldFish=createFish("gold");
 const blueFish=createFish("blue");
 
 goldFish.scale.setScalar(1.12);
-blueFish.scale.setScalar(0.95);
+blueFish.scale.setScalar(.95);
 
-/* Small distant fish school */
+/* DISTANT FISH */
 
 const littleFish=[];
 
 function createTinyFish(color){
-  const g=new THREE.Group();
+  const group=new THREE.Group();
+
   const body=new THREE.Mesh(
-    new THREE.SphereGeometry(0.18,10,8),
-    material(color,0.35,0.1)
+    new THREE.SphereGeometry(.18,10,8),
+    mat(color,.35,.1)
   );
-  body.scale.set(1.7,0.7,0.6);
-  g.add(body);
+  body.scale.set(1.7,.7,.6);
+  group.add(body);
 
   const tail=createFin(color,"tail");
-  tail.position.x=-0.25;
-  tail.scale.set(0.35,0.35,1);
-  g.add(tail);
+  tail.position.x=-.25;
+  tail.scale.set(.35,.35,1);
+  group.add(tail);
 
-  g.userData={
+  group.userData={
     phase:Math.random()*6.28,
     radius:3+Math.random()*5,
-    speed:0.5+Math.random()*0.4
+    speed:.5+Math.random()*.4
   };
-  scene.add(g);
-  littleFish.push(g);
+
+  scene.add(group);
+  littleFish.push(group);
 }
 
 for(let i=0;i<12;i++){
@@ -538,105 +640,309 @@ for(let i=0;i<12;i++){
 const bubbles=[];
 
 for(let i=0;i<65;i++){
-  const mesh=new THREE.Mesh(
-    new THREE.SphereGeometry(0.035+Math.random()*0.07,8,8),
+  const bubble=new THREE.Mesh(
+    new THREE.SphereGeometry(.035+Math.random()*.07,8,8),
     new THREE.MeshBasicMaterial({
       color:0xc8f7ff,
       transparent:true,
-      opacity:0.38
+      opacity:.38
     })
   );
-  mesh.position.set(
-    (Math.random()-0.5)*25,
+
+  bubble.position.set(
+    (Math.random()-.5)*25,
     -5+Math.random()*13,
-    (Math.random()-0.5)*12
+    (Math.random()-.5)*12
   );
-  mesh.userData={
-    speed:0.4+Math.random()*0.8,
+
+  bubble.userData={
+    speed:.4+Math.random()*.8,
     phase:Math.random()*6
   };
-  scene.add(mesh);
-  bubbles.push(mesh);
+
+  scene.add(bubble);
+  bubbles.push(bubble);
 }
 
-/* FOOD PARTICLES */
-
-const foodMeshes=[];
+/* FEED PARTICLES */
 
 function dropFood(){
+  const centerX=(Math.random()-.5)*3;
+
   for(let i=0;i<7;i++){
     const pellet=new THREE.Mesh(
-      new THREE.SphereGeometry(0.095,8,8),
+      new THREE.SphereGeometry(.095,10,8),
       new THREE.MeshStandardMaterial({
         color:0xffc64b,
         emissive:0x6b3600,
-        roughness:0.4
+        roughness:.4
       })
     );
 
-    const x=(Math.random()-0.5)*3;
-    pellet.position.set(x,5.2,1+(Math.random()-0.5)*2);
+    pellet.position.set(
+      centerX+(Math.random()-.5)*2,
+      5.2,
+      1+(Math.random()-.5)*2
+    );
+
     pellet.userData={
-      speed:1.3+Math.random()*0.8,
+      speed:1.3+Math.random()*.8,
       wobble:Math.random()*5
     };
+
     scene.add(pellet);
     foodMeshes.push(pellet);
   }
 
-  foodTargets.push({
-    x:0,
-    y:-3.2,
+  foodTarget={
+    x:centerX,
+    y:-2.5,
     z:1,
     time:performance.now()
-  });
+  };
 }
 
-/* FISH MOVEMENT */
+/* SMOOTH FISH MOVEMENT */
 
-const clock=new THREE.Clock();
-
-function animateFish(fish,time){
+function animateFish(fish,time,delta){
   const d=fish.userData;
   const phase=time*d.speed+d.phase;
 
   let targetX=Math.sin(phase)*d.radiusX;
   let targetY=d.baseY+Math.sin(phase*1.7)*d.radiusY;
-  let targetZ=d.baseZ+Math.cos(phase*0.8)*1.5;
+  let targetZ=d.baseZ+Math.cos(phase*.8)*1.5;
 
-  /* When food is dropped, fish swim toward it */
-  if(foodTargets.length){
-    const target=foodTargets[0];
-    const dx=target.x-fish.position.x;
-    const dy=target.y-fish.position.y;
-    targetX=fish.position.x+dx*0.018;
-    targetY=fish.position.y+dy*0.018;
-    targetZ=target.z;
+  /* Swim toward food */
+  if(foodTarget && performance.now()-foodTarget.time<5500){
+    targetX=foodTarget.x+(fish===goldFish?-1.1:1.1);
+    targetY=foodTarget.y+(fish===goldFish?.4:-.3);
+    targetZ=foodTarget.z+1;
   }
 
   const oldX=fish.position.x;
-  fish.position.x+=(targetX-fish.position.x)*0.018;
-  fish.position.y+=(targetY-fish.position.y)*0.018;
-  fish.position.z+=(targetZ-fish.position.z)*0.018;
 
-  const direction=fish.position.x-oldX;
-  fish.rotation.y=direction<0?Math.PI:0;
-  fish.rotation.z=Math.sin(phase*1.7)*0.08;
+  const smooth=Math.min(1,delta*1.5);
 
-  d.tailPivot.rotation.y=Math.sin(time*9+d.phase)*0.55;
-  d.tailPivot.rotation.z=Math.sin(time*5+d.phase)*0.12;
+  fish.position.x+=(targetX-fish.position.x)*smooth;
+  fish.position.y+=(targetY-fish.position.y)*smooth;
+  fish.position.z+=(targetZ-fish.position.z)*smooth;
+
+  const movement=fish.position.x-oldX;
+
+  if(Math.abs(movement)>.001){
+    const desiredFacing=movement<0?-1:1;
+    if(desiredFacing!==d.facing){
+      d.facing=desiredFacing;
+    }
+  }
+
+  fish.rotation.y=d.facing<0?Math.PI:0;
+  fish.rotation.z=Math.sin(phase*1.7)*.07;
+
+  /* Body movement */
+  fish.rotation.x=Math.sin(phase*1.2)*.025;
+
+  /* Tail and fins */
+  d.tailPivot.rotation.y=Math.sin(time*9+d.phase)*.55;
+  d.tailPivot.rotation.z=Math.sin(time*5+d.phase)*.12;
 
   d.sideFins.forEach((fin,i)=>{
-    fin.rotation.y=Math.sin(time*12+d.phase+i)*0.55;
-    fin.rotation.x=Math.sin(time*9+i)*0.12;
+    fin.rotation.y=Math.sin(time*12+d.phase+i)*.55;
+    fin.rotation.x=Math.sin(time*9+i)*.12;
   });
 
   d.flowing.forEach((fin,i)=>{
-    fin.rotation.y=Math.sin(time*8+i+d.phase)*0.25;
+    fin.rotation.y=Math.sin(time*8+i+d.phase)*.25;
+    fin.rotation.z=Math.sin(time*5+i+d.phase)*.1;
   });
 }
 
-/* FOOD BUTTON */
+/* SOUND ENGINE - GENERATED WITH WEB AUDIO */
+
+let audioContext=null;
+let masterGain=null;
+let ambientGain=null;
+let musicGain=null;
+let soundEnabled=false;
+let audioNodes=[];
+
+function createNoiseBuffer(ctx){
+  const buffer=ctx.createBuffer(
+    1,
+    ctx.sampleRate*3,
+    ctx.sampleRate
+  );
+
+  const data=buffer.getChannelData(0);
+
+  for(let i=0;i<data.length;i++){
+    data[i]=(Math.random()*2-1)*.35;
+  }
+
+  return buffer;
+}
+
+function startAmbient(){
+  const ctx=audioContext;
+
+  /* Soft underwater water noise */
+  const noise=ctx.createBufferSource();
+  noise.buffer=createNoiseBuffer(ctx);
+  noise.loop=true;
+
+  const filter=ctx.createBiquadFilter();
+  filter.type="lowpass";
+  filter.frequency.value=420;
+  filter.Q.value=.7;
+
+  const gain=ctx.createGain();
+  gain.gain.value=.17;
+
+  noise.connect(filter);
+  filter.connect(gain);
+  gain.connect(ambientGain);
+  noise.start();
+
+  audioNodes.push(noise);
+
+  /* Deep gentle ocean tone */
+  const oscillator=ctx.createOscillator();
+  oscillator.type="sine";
+  oscillator.frequency.value=68;
+
+  const toneGain=ctx.createGain();
+  toneGain.gain.value=.08;
+
+  oscillator.connect(toneGain);
+  toneGain.connect(ambientGain);
+  oscillator.start();
+
+  audioNodes.push(oscillator);
+
+  /* Gentle musical notes */
+  [110,164.81,220].forEach((frequency,index)=>{
+    const osc=ctx.createOscillator();
+    osc.type="sine";
+    osc.frequency.value=frequency;
+
+    const g=ctx.createGain();
+    g.gain.value=index===0?.035:.012;
+
+    osc.connect(g);
+    g.connect(musicGain);
+    osc.start();
+
+    audioNodes.push(osc);
+  });
+}
+
+function setVolume(){
+  const value=Number(document.getElementById("volumeSlider").value)/100;
+  document.getElementById("volumeValue").textContent=Math.round(value*100)+"%";
+
+  if(masterGain){
+    masterGain.gain.setTargetAtTime(
+      value,
+      audioContext.currentTime,
+      .08
+    );
+  }
+}
+
+async function enableSound(){
+  try{
+    if(!audioContext){
+      const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+      if(!AudioContextClass) throw new Error("Audio not supported");
+
+      audioContext=new AudioContextClass();
+
+      masterGain=audioContext.createGain();
+      masterGain.gain.value=Number(document.getElementById("volumeSlider").value)/100;
+      masterGain.connect(audioContext.destination);
+
+      ambientGain=audioContext.createGain();
+      ambientGain.gain.value=.7;
+      ambientGain.connect(masterGain);
+
+      musicGain=audioContext.createGain();
+      musicGain.gain.value=.55;
+      musicGain.connect(masterGain);
+
+      startAmbient();
+    }
+
+    await audioContext.resume();
+    soundEnabled=true;
+
+    document.getElementById("soundButton").textContent="SOUND ON";
+    document.getElementById("soundButton").classList.add("on");
+    document.getElementById("soundNote").textContent="ရေအောက်သဘာဝအသံနဲ့ နူးညံ့တဲ့ Music ဖွင့်ထားပါတယ်။";
+    setVolume();
+  }catch(error){
+    document.getElementById("soundNote").textContent="ဒီ Browser မှာ အသံဖွင့်လို့မရသေးပါ။ Browser ကို စစ်ဆေးပါ။";
+    console.error(error);
+  }
+}
+
+async function disableSound(){
+  soundEnabled=false;
+
+  if(audioContext){
+    await audioContext.suspend();
+  }
+
+  document.getElementById("soundButton").textContent="SOUND OFF";
+  document.getElementById("soundButton").classList.remove("on");
+  document.getElementById("soundNote").textContent="အသံပိတ်ထားပါတယ်။ ပြန်ဖွင့်ရန် SOUND ON ကိုနှိပ်ပါ။";
+}
+
+document.getElementById("soundButton").addEventListener("click",()=>{
+  if(soundEnabled) disableSound();
+  else enableSound();
+});
+
+document.getElementById("volumeSlider").addEventListener("input",setVolume);
+
+/* BUBBLE SOUND EFFECT */
+
+function bubbleSound(){
+  if(!soundEnabled||!audioContext)return;
+
+  const ctx=audioContext;
+  const osc=ctx.createOscillator();
+  const gain=ctx.createGain();
+
+  osc.type="sine";
+  osc.frequency.setValueAtTime(500+Math.random()*400,ctx.currentTime);
+  osc.frequency.exponentialRampToValueAtTime(
+    110+Math.random()*80,
+    ctx.currentTime+.22
+  );
+
+  gain.gain.setValueAtTime(.0001,ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(.12,ctx.currentTime+.025);
+  gain.gain.exponentialRampToValueAtTime(.0001,ctx.currentTime+.25);
+
+  osc.connect(gain);
+  gain.connect(masterGain);
+
+  osc.start();
+  osc.stop(ctx.currentTime+.27);
+}
+
+/* FEEDING SOUND */
+
+function feedingSound(){
+  if(!soundEnabled||!audioContext)return;
+
+  bubbleSound();
+
+  setTimeout(bubbleSound,180);
+  setTimeout(bubbleSound,430);
+}
+
+/* FEED BUTTON */
 
 function feedFish(){
   if(feeding)return;
@@ -648,8 +954,10 @@ function feedFish(){
 
   food--;
   updateBalance();
+
   feeding=true;
   dropFood();
+  feedingSound();
 
   wish.textContent="🐠 အစာလေးတွေ ကျလာပြီ။ ငါးလေးတွေ အစာဆီကို ကူးလာနေပါပြီ။";
 
@@ -682,6 +990,9 @@ document.querySelectorAll(".package").forEach(button=>{
 function resize(){
   const w=shell.clientWidth;
   const h=shell.clientHeight;
+
+  if(!w||!h)return;
+
   camera.aspect=w/h;
   camera.updateProjectionMatrix();
   renderer.setSize(w,h,false);
@@ -690,63 +1001,76 @@ function resize(){
 window.addEventListener("resize",resize);
 resize();
 
-/* RENDER LOOP */
+/* MAIN RENDER LOOP */
+
+const clock=new THREE.Clock();
 
 function render(){
   requestAnimationFrame(render);
 
-  const delta=Math.min(clock.getDelta(),0.04);
+  const delta=Math.min(clock.getDelta(),.04);
   const time=clock.elapsedTime;
 
-  animateFish(goldFish,time);
-  animateFish(blueFish,time);
+  animateFish(goldFish,time,delta);
+  animateFish(blueFish,time,delta);
 
-  littleFish.forEach((f,i)=>{
-    const d=f.userData;
+  /* Distant fish swimming */
+  littleFish.forEach((fish,i)=>{
+    const d=fish.userData;
     const a=time*d.speed+d.phase;
-    f.position.set(
+
+    fish.position.set(
       Math.sin(a)*d.radius,
       2+Math.sin(a*1.5)*1.5,
       -4+Math.cos(a)*2
     );
-    f.rotation.y=Math.cos(a)>0?0:Math.PI;
+
+    fish.rotation.y=Math.cos(a)>0?0:Math.PI;
   });
 
+  /* Plant sway */
   plants.forEach(p=>{
-    p.group.rotation.z=Math.sin(time*0.8+p.phase)*0.12;
+    p.group.rotation.z=Math.sin(time*.8+p.phase)*.12;
   });
 
+  /* Rising bubbles */
   bubbles.forEach(b=>{
     b.position.y+=b.userData.speed*delta;
-    b.position.x+=Math.sin(time+b.userData.phase)*0.002;
+    b.position.x+=Math.sin(time+b.userData.phase)*.002;
+
     if(b.position.y>7){
       b.position.y=-5.8;
-      b.position.x=(Math.random()-0.5)*24;
+      b.position.x=(Math.random()-.5)*24;
     }
   });
 
+  /* Moving light rays */
   rays.forEach((r,i)=>{
-    r.rotation.z=Math.sin(time*0.25+i)*0.1;
-    r.material.opacity=0.035+Math.sin(time*0.6+i)*0.018;
+    r.rotation.z=Math.sin(time*.25+i)*.1;
+    r.material.opacity=.035+Math.sin(time*.6+i)*.018;
   });
 
-  foodMeshes.forEach((p,i)=>{
-    p.position.y-=p.userData.speed*delta;
-    p.position.x+=Math.sin(time*3+p.userData.wobble)*0.004;
-    if(p.position.y<-5.5){
-      scene.remove(p);
+  /* Falling food */
+  for(let i=foodMeshes.length-1;i>=0;i--){
+    const pellet=foodMeshes[i];
+
+    pellet.position.y-=pellet.userData.speed*delta;
+    pellet.position.x+=Math.sin(time*3+pellet.userData.wobble)*.004;
+
+    if(pellet.position.y<-5.5){
+      scene.remove(pellet);
+      pellet.geometry.dispose();
+      pellet.material.dispose();
       foodMeshes.splice(i,1);
     }
-  });
-
-  /* Expire food attraction */
-  while(foodTargets.length &&
-    performance.now()-foodTargets[0].time>4500){
-    foodTargets.shift();
   }
 
-  blueLight.position.x=7+Math.sin(time*0.3)*2;
-  reefLight.intensity=16+Math.sin(time*0.7)*3;
+  if(foodTarget&&performance.now()-foodTarget.time>5500){
+    foodTarget=null;
+  }
+
+  blueLight.position.x=7+Math.sin(time*.3)*2;
+  reefLight.intensity=16+Math.sin(time*.7)*3;
 
   renderer.render(scene,camera);
 }
@@ -759,7 +1083,6 @@ try{
   wish.textContent="3D စတင်ရာတွင် အမှားရှိနေပါတယ်။ Browser ကို ပြန်ဖွင့်ကြည့်ပါ။";
   console.error(error);
 }
-
 </script>
 </body>
 </html>
