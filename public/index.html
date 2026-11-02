@@ -1,628 +1,156 @@
-<!DOCTYPE html>
-<html lang="en">
+from pathlib import Path
+
+html = r'''<!doctype html>
+<html lang="my">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#061b35">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#061b32">
 <title>LUCKY OCEAN</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Noto+Sans+Myanmar:wght@400;500;600;700&display=swap');
+:root{--navy:#06182d;--blue:#0b3455;--cyan:#72e5f2;--gold:#f4d28a;--purple:#a995ff;--white:#effaff}
 *{box-sizing:border-box}
-
-body{
- margin:0;
- min-height:100vh;
- color:#f4f8ff;
- font-family:Arial,sans-serif;
- background:
- radial-gradient(ellipse at 50% 0%,#1a6084 0,transparent 43%),
- linear-gradient(180deg,#061b35,#07172c 58%,#100e2b);
-}
-
-.app{
- max-width:520px;
- margin:auto;
- padding:22px 16px 42px;
-}
-
-header{
- display:flex;
- justify-content:space-between;
- align-items:center;
-}
-
-.brand{
- font-size:23px;
- font-weight:900;
- letter-spacing:2px;
-}
-
-.brand span{color:#ffd77a}
-
-.tag{
- color:#9fc8e9;
- font-size:10px;
- letter-spacing:3px;
- margin-top:5px;
-}
-
-.badge{
- border:1px solid #d8b66c66;
- color:#ffdc91;
- border-radius:20px;
- padding:8px 11px;
- font-size:10px;
-}
-
-.welcome{
- text-align:center;
- margin:27px 0 19px;
-}
-
-.welcome h1{
- font-size:25px;
- margin:0 0 8px;
-}
-
-.welcome p{
- color:#a9c5df;
- font-size:13px;
- line-height:1.6;
-}
-
-/* LARGE NATURAL AQUARIUM */
-
-.tank{
- position:relative;
- height:390px;
- overflow:hidden;
- isolation:isolate;
- border:3px solid #c5f0ff99;
- border-radius:27px;
- background:
- radial-gradient(ellipse at 50% 95%,#42d0c455,transparent 50%),
- radial-gradient(ellipse at 20% 40%,#45c5e533,transparent 45%),
- linear-gradient(180deg,#5bc8e733 0%,#087da6 48%,#063858 100%);
- box-shadow:
- inset 0 0 35px #9beaff44,
- inset 0 -25px 45px #001e3b88,
- 0 18px 45px #0009;
-}
-
-.tank:before{
- content:"";
- position:absolute;
- inset:0;
- z-index:5;
- pointer-events:none;
- background:
- linear-gradient(115deg,#ffffff18,transparent 22%,transparent 75%,#ffffff0b),
- repeating-linear-gradient(110deg,transparent 0 45px,#d9f9ff08 46px 48px);
-}
-
-.tank:after{
- content:"";
- position:absolute;
- z-index:6;
- top:0;
- left:7%;
- width:23%;
- height:100%;
- background:linear-gradient(90deg,#ffffff15,transparent);
- transform:skewX(-12deg);
- pointer-events:none;
-}
-
-.waterline{
- position:absolute;
- top:13px;
- left:0;
- right:0;
- height:3px;
- background:#d8faffaa;
- box-shadow:0 0 17px #b9f6ff;
- animation:water 4s ease-in-out infinite alternate;
-}
-
-@keyframes water{
- from{opacity:.45;transform:scaleX(.85)}
- to{opacity:1;transform:scaleX(1)}
-}
-
-/* LIGHT RAYS */
-
-.ray{
- position:absolute;
- top:-35px;
- width:65px;
- height:230px;
- background:linear-gradient(180deg,#e7fcff20,transparent);
- filter:blur(12px);
- transform:rotate(18deg);
-}
-
-.r1{left:17%}
-.r2{left:48%;height:270px;opacity:.55}
-.r3{right:12%;height:190px;opacity:.35}
-
-/* BUBBLES */
-
-.bubble{
- position:absolute;
- bottom:-25px;
- width:9px;
- height:9px;
- border:1px solid #d9fbff99;
- border-radius:50%;
- box-shadow:inset 2px 1px 3px #fff8;
- animation:rise 8s linear infinite;
-}
-
-.b1{left:20%;animation-delay:-2s}
-.b2{left:37%;width:6px;height:6px;animation-delay:-5s}
-.b3{left:65%;width:12px;height:12px;animation-delay:-3s}
-.b4{right:17%;width:7px;height:7px;animation-delay:-6s}
-.b5{left:80%;animation-delay:-1s}
-
-@keyframes rise{
- 0%{transform:translateY(0);opacity:0}
- 15%{opacity:.8}
- 85%{opacity:.7}
- 100%{transform:translateY(-410px);opacity:0}
-}
-
-/* AQUATIC PLANTS */
-
-.plant{
- position:absolute;
- bottom:22px;
- width:15px;
- height:125px;
- border-radius:100% 0;
- transform-origin:bottom center;
- background:linear-gradient(90deg,#145b50,#65c7a0);
- animation:sway 4s ease-in-out infinite alternate;
-}
-
-.plant:before,.plant:after{
- content:"";
- position:absolute;
- width:17px;
- height:60%;
- border-radius:100% 0;
- background:linear-gradient(90deg,#1a7564,#72d1a5);
-}
-
-.plant:before{
- left:12px;
- top:15px;
- transform:rotate(27deg);
-}
-
-.plant:after{
- right:12px;
- top:45px;
- transform:rotate(-30deg);
-}
-
-.p1{left:7%;height:120px}
-.p2{left:17%;height:90px;background:#7654a5;animation-delay:-2s}
-.p3{right:10%;height:145px}
-.p4{right:20%;height:85px;background:#7654a5;animation-delay:-1s}
-
-@keyframes sway{
- from{transform:rotate(-8deg)}
- to{transform:rotate(9deg)}
-}
-
-/* ROCKS AND SAND */
-
-.rock{
- position:absolute;
- bottom:21px;
- width:57px;
- height:34px;
- border-radius:55% 45% 30% 30%;
- background:linear-gradient(145deg,#82949a,#263f53 70%);
- box-shadow:inset 5px 5px 10px #ffffff25,0 5px 9px #001a33aa;
-}
-
-.rk1{left:27%;width:45px;height:28px}
-.rk2{right:28%;width:63px;height:38px}
-.rk3{right:39%;width:30px;height:21px}
-
-.sand{
- position:absolute;
- bottom:0;
- width:100%;
- height:35px;
- background:linear-gradient(#e6d5a477,#bda36e,#806d50);
- border-radius:50% 50% 0 0;
-}
-
-/* FISH */
-
-.fish{
- position:absolute;
- z-index:3;
- width:135px;
- height:76px;
- border-radius:55% 48% 48% 55%;
- filter:drop-shadow(0 8px 8px #001b36aa);
- animation:swim 6s ease-in-out infinite alternate;
-}
-
-.fish:before{
- content:"";
- position:absolute;
- right:-30px;
- top:17px;
- border-top:21px solid transparent;
- border-bottom:21px solid transparent;
- border-left:35px solid var(--tail);
- filter:drop-shadow(1px 2px 2px #001c36aa);
-}
-
-.fish:after{
- content:"";
- position:absolute;
- left:22px;
- top:8px;
- width:90px;
- height:59px;
- border-radius:50%;
- background:
- repeating-linear-gradient(90deg,transparent 0 9px,#ffffff55 10px 11px),
- linear-gradient(120deg,#ffffff22,transparent);
-}
-
-.male{
- --tail:#e9ae42;
- left:13%;
- top:105px;
- background:
- radial-gradient(ellipse at 35% 25%,#fff8ce,#f4c15b 42%,#b96d25 78%,#70401d);
-}
-
-.female{
- --tail:#a0eff8;
- right:12%;
- top:220px;
- background:
- radial-gradient(ellipse at 35% 25%,#fff,#d5faff 40%,#82cce4 75%,#407fa7);
- animation-delay:-2s;
-}
-
-.eye{
- position:absolute;
- z-index:4;
- right:16px;
- top:23px;
- width:10px;
- height:10px;
- background:#fff;
- border-radius:50%;
- box-shadow:inset -3px -2px #142b4a,0 0 5px #fff8;
-}
-
-.fin{
- position:absolute;
- left:45px;
- top:-17px;
- width:39px;
- height:26px;
- background:var(--tail);
- border-radius:100% 0;
- transform:rotate(25deg);
- opacity:.8;
-}
-
-@keyframes swim{
- from{transform:translateX(-9px) rotate(-3deg)}
- to{transform:translateX(15px) rotate(3deg)}
-}
-
-.label{
- position:absolute;
- z-index:4;
- font-size:10px;
- color:#e5f8ff;
- letter-spacing:2px;
- text-shadow:0 2px 5px #001e3b;
-}
-
-.label.m{left:17%;top:76px}
-.label.f{right:15%;top:190px}
-
-.tank-caption{
- text-align:center;
- color:#a9d7ed;
- font-size:11px;
- margin:13px 0 24px;
-}
-
-.balance{
- display:flex;
- justify-content:space-between;
- align-items:center;
- padding:16px;
- border:1px solid #6caedb55;
- background:#112c4b99;
- border-radius:16px;
- margin-bottom:23px;
-}
-
-.balance small{
- color:#9dbbd6;
- display:block;
- margin-bottom:5px;
-}
-
-.balance strong{
- color:#ffda88;
- font-size:22px;
-}
-
-.section-title{
- font-size:17px;
- margin:0 0 7px;
-}
-
-.hint{
- color:#9cb5ce;
- font-size:12px;
- line-height:1.6;
- margin:0 0 14px;
-}
-
-.packages{
- display:grid;
- grid-template-columns:repeat(3,1fr);
- gap:9px;
-}
-
-.package{
- border:1px solid #6596bf66;
- background:#102846;
- color:white;
- border-radius:14px;
- padding:15px 5px;
- cursor:pointer;
- text-align:center;
-}
-
-.package.active{
- border:2px solid #f3c76d;
- background:linear-gradient(160deg,#57452c,#182c49);
- box-shadow:0 0 18px #e5b65c33;
-}
-
-.package b{
- display:block;
- color:#ffdc91;
- font-size:15px;
-}
-
-.package small{
- display:block;
- color:#a9c6df;
- font-size:10px;
- margin-top:7px;
-}
-
-.primary{
- width:100%;
- border:0;
- border-radius:14px;
- padding:16px;
- margin-top:15px;
- color:#14213a;
- font-weight:900;
- letter-spacing:1px;
- font-size:13px;
- background:linear-gradient(100deg,#f7d98f,#d9a94c);
- cursor:pointer;
-}
-
-.feed{
- background:linear-gradient(100deg,#58d4e9,#a7d9f7);
- margin-top:10px;
-}
-
-.wish{
- text-align:center;
- margin-top:22px;
- padding:17px;
- border:1px solid #9879d566;
- border-radius:16px;
- background:#39245b55;
- color:#e7d8ff;
- font-size:13px;
- line-height:1.7;
-}
-
-.wish strong{
- color:#ffdb92;
- display:block;
- margin-bottom:5px;
-}
-
-footer{
- text-align:center;
- color:#66839e;
- font-size:10px;
- margin-top:25px;
- letter-spacing:2px;
-}
-
-@media(max-width:360px){
- .tank{height:350px}
- .fish{transform:scale(.85)}
- .male{left:8%}
- .female{right:7%}
-}
+body{margin:0;min-height:100vh;color:var(--white);font-family:'DM Sans','Noto Sans Myanmar',sans-serif;background:radial-gradient(ellipse at 50% -15%,#1a5272 0,#0a2945 38%,#041426 78%);padding:22px 14px 38px}
+.shell{width:min(100%,760px);margin:auto}
+header{text-align:center;margin:4px 0 18px}
+.brand{font-size:clamp(25px,7vw,38px);font-weight:800;letter-spacing:4px;color:#eafcff;text-shadow:0 0 20px #63dff277}
+.tag{margin-top:5px;font-size:12px;letter-spacing:2px;color:#9ed9e5}
+.topline{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 2px 12px;color:#b9e6ed;font-size:12px}
+.live{display:flex;align-items:center;gap:7px}.dot{width:7px;height:7px;border-radius:50%;background:#75f3c4;box-shadow:0 0 10px #75f3c4}
+.balance{border:1px solid #7ddce54d;background:#092a43b8;padding:8px 12px;border-radius:20px;color:#e9fdff}
+.tank{height:clamp(390px,76vw,510px);position:relative;overflow:hidden;border:2px solid #9cefff75;border-radius:25px;background:linear-gradient(180deg,#2a91b4 0%,#12638b 24%,#08436b 58%,#062b4d 100%);box-shadow:inset 0 0 38px #b4f7ff30,0 18px 48px #0008,0 0 30px #55cce52b}
+.tank:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,#fff2 0%,transparent 18%,transparent 74%,#d6fbff13 100%);pointer-events:none;z-index:5}
+.waterline{position:absolute;top:0;left:-10%;width:120%;height:15px;background:#c3fbff50;filter:blur(5px);border-radius:50%;animation:wave 5s ease-in-out infinite alternate}
+@keyframes wave{to{transform:translateX(4%) scaleY(.7)}}
+.rays{position:absolute;inset:-20% 0 15%;background:repeating-conic-gradient(from 185deg at 50% -8%,transparent 0deg,transparent 8deg,#d8ffff12 9deg,#d8ffff12 12deg,transparent 14deg);mask-image:linear-gradient(#000,transparent 85%);animation:ray 12s ease-in-out infinite alternate}
+@keyframes ray{to{transform:translateX(3%) rotate(3deg);opacity:.55}}
+.caustics{position:absolute;inset:0;opacity:.16;background:radial-gradient(ellipse at 25% 20%,#d9ffff 0 1px,transparent 3px),radial-gradient(ellipse at 65% 36%,#d9ffff 0 1px,transparent 3px);background-size:90px 70px,120px 90px}
+.bubble{position:absolute;bottom:-30px;width:7px;height:7px;border:1px solid #d8fbff9c;border-radius:50%;animation:rise 9s linear infinite;opacity:.7}
+@keyframes rise{to{transform:translateY(-560px) translateX(25px);opacity:0}}
+.rock{position:absolute;bottom:34px;background:linear-gradient(145deg,#78939a,#263f50 55%,#142b3b);border-radius:48% 52% 20% 25%;box-shadow:inset 7px 5px 12px #d4ffff35,0 8px 15px #00101e99}
+.rock.r1{left:5%;width:120px;height:53px;transform:rotate(-8deg)}.rock.r2{right:7%;width:145px;height:66px;transform:rotate(9deg)}.rock.r3{left:36%;width:95px;height:40px;bottom:27px}
+.sand{position:absolute;bottom:0;height:43px;width:100%;background:linear-gradient(#d9c99b,#9d906f);clip-path:polygon(0 24%,15% 10%,28% 30%,42% 15%,56% 34%,72% 12%,86% 27%,100% 9%,100% 100%,0 100%)}
+.plant{position:absolute;bottom:28px;width:90px;height:150px;z-index:2}
+.plant.left{left:3%}.plant.right{right:3%;transform:scaleX(-1) scale(.9)}
+.blade{position:absolute;bottom:0;left:35px;width:18px;height:145px;border-radius:100% 0 100% 0;transform-origin:bottom;background:linear-gradient(90deg,#145b55,#65ba91 55%,#b3d5a1)}
+.blade:nth-child(2){transform:rotate(-28deg);height:115px}.blade:nth-child(3){transform:rotate(24deg);height:130px}.blade:nth-child(4){transform:rotate(-48deg);height:85px}
+.fish{position:absolute;width:190px;height:110px;z-index:4;filter:drop-shadow(0 12px 9px #00101e55);animation:swim 7s ease-in-out infinite}
+.fish.gold{left:17%;top:31%}.fish.pearl{right:12%;top:55%;transform:scale(.82);animation-delay:-3s}
+@keyframes swim{0%,100%{translate:0 0}50%{translate:12px -12px}}
+.fish svg{width:100%;height:100%;overflow:visible}
+.tail{transform-box:fill-box;transform-origin:center;animation:tail 1s ease-in-out infinite alternate}
+@keyframes tail{to{transform:rotate(12deg)}}
+.fin{transform-box:fill-box;transform-origin:center;animation:fin 2s ease-in-out infinite alternate}
+@keyframes fin{to{transform:rotate(-8deg)}}
+.fish-label{position:absolute;z-index:6;top:13px;left:15px;font-size:10px;letter-spacing:2px;color:#d5faffb8}
+.tank-caption{position:absolute;right:15px;top:13px;z-index:6;font-size:10px;letter-spacing:1.5px;color:#e5fcffb8}
+.glass-glow{position:absolute;inset:0;border-radius:23px;box-shadow:inset 0 0 0 1px #eaffff55,inset 0 0 45px #b7f7ff20;z-index:7;pointer-events:none}
+.section{margin-top:18px;padding:18px;border:1px solid #85dce52e;border-radius:20px;background:linear-gradient(145deg,#0c2b46dd,#071c31ed);box-shadow:0 12px 30px #0003}
+h2{font-size:17px;margin:0 0 6px;color:#eaffff} .sub{font-size:12px;line-height:1.7;color:#a8cbd8;margin:0 0 15px}
+.packages{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.pkg{border:1px solid #8ddce54a;border-radius:15px;padding:13px 5px;background:#0b3451;color:#eafaff;text-align:center;cursor:pointer;transition:.2s}
+.pkg strong{display:block;font-size:17px;color:#ffe1a4}.pkg span{font-size:10px;color:#a9d9e3}
+.pkg.active{border-color:#f2d18b;background:linear-gradient(145deg,#31536a,#163650);box-shadow:0 0 0 1px #f2d18b55,0 0 18px #f2d18b22;transform:translateY(-2px)}
+button{font:inherit}
+.primary{width:100%;margin-top:14px;border:0;border-radius:14px;padding:15px;background:linear-gradient(100deg,#65dce9,#9cecf0 50%,#e8ce91);color:#08243b;font-weight:800;letter-spacing:1px;cursor:pointer;box-shadow:0 7px 20px #57cbd533}
+.primary:active{transform:scale(.99)}
+.note{font-size:11px;color:#9dbfca;line-height:1.7;margin:12px 0 0}
+.wish{display:none;margin-top:13px;padding:12px;border-radius:12px;background:#123d4f;color:#d9fbef;text-align:center;font-size:13px;line-height:1.7}
+footer{text-align:center;color:#7daab8;font-size:10px;letter-spacing:1.5px;padding:20px 0 0}
+@media(max-width:430px){.tank{height:405px}.fish{width:165px}.fish.gold{left:8%;top:32%}.fish.pearl{right:2%;top:56%}.packages{gap:6px}.pkg strong{font-size:15px}}
 </style>
 </head>
-
 <body>
-<main class="app">
+<div class="shell">
+<header><div class="brand">LUCKY OCEAN</div><div class="tag">A LITTLE WORLD OF HAPPINESS</div></header>
+<div class="topline"><div class="live"><span class="dot"></span> OCEAN IS PEACEFUL</div><div class="balance">🐚 Food balance: <b id="balance">0</b></div></div>
 
-<header>
- <div>
-  <div class="brand">LUCKY <span>OCEAN</span></div>
-  <div class="tag">A LITTLE WORLD OF MAGIC</div>
- </div>
- <div class="badge">✦ AQUARIUM</div>
-</header>
+<section class="tank" aria-label="Luxury fantasy aquarium">
+  <div class="rays"></div><div class="caustics"></div><div class="waterline"></div>
+  <div class="fish-label">THE GOLDEN ONE · THE PEARL ONE</div><div class="tank-caption">UNDERWATER DREAM</div>
+  <div class="plant left"><i class="blade"></i><i class="blade"></i><i class="blade"></i><i class="blade"></i></div>
+  <div class="plant right"><i class="blade"></i><i class="blade"></i><i class="blade"></i><i class="blade"></i></div>
+  <div class="rock r1"></div><div class="rock r2"></div><div class="rock r3"></div><div class="sand"></div>
 
-<section class="welcome">
- <h1>Welcome to your ocean 💙</h1>
- <p>A peaceful little world, two magical fish,<br>
- and a beautiful wish waiting for you.</p>
+  <div class="fish gold" id="goldFish">
+  <svg viewBox="0 0 220 120" role="img" aria-label="Golden fantasy fish">
+   <defs>
+    <linearGradient id="goldBody" x1="0" y1="0" x2="0.2" y2="1"><stop stop-color="#fff0b2"/><stop offset=".28" stop-color="#e8b84e"/><stop offset=".62" stop-color="#b97922"/><stop offset="1" stop-color="#70421c"/></linearGradient>
+    <linearGradient id="goldFin"><stop stop-color="#fff0b2" stop-opacity=".9"/><stop offset="1" stop-color="#c47b28" stop-opacity=".25"/></linearGradient>
+    <pattern id="scales" width="13" height="11" patternUnits="userSpaceOnUse"><path d="M0 5 Q6 12 13 5" fill="none" stroke="#fff0b5" stroke-opacity=".45" stroke-width="1"/></pattern>
+   </defs>
+   <path class="tail" d="M55 60 Q20 20 5 18 Q16 57 4 99 Q31 93 55 60Z" fill="url(#goldFin)" stroke="#f7d98c" stroke-width="2"/>
+   <path class="fin" d="M91 28 Q110 -5 145 23 Q123 31 105 43Z" fill="url(#goldFin)"/>
+   <path class="fin" d="M88 87 Q116 121 150 88 Q119 88 103 72Z" fill="url(#goldFin)"/>
+   <path d="M49 59 Q71 15 133 31 Q178 39 185 61 Q169 91 122 92 Q70 96 49 59Z" fill="url(#goldBody)" stroke="#ffe5a0" stroke-width="2"/>
+   <path d="M49 59 Q71 15 133 31 Q178 39 185 61 Q169 91 122 92 Q70 96 49 59Z" fill="url(#scales)"/>
+   <path d="M111 50 Q145 41 161 61 Q140 77 112 69Z" fill="#fff1ba" opacity=".18"/>
+   <path d="M106 65 Q120 52 132 67 Q119 83 106 65Z" fill="#f8df9b" opacity=".7"/>
+   <circle cx="166" cy="52" r="5.5" fill="#142536"/><circle cx="168" cy="50" r="1.8" fill="#fff"/>
+   <path d="M181 67 Q190 71 195 66" fill="none" stroke="#633719" stroke-width="2" stroke-linecap="round"/>
+   <path d="M78 55 Q69 68 79 79" fill="none" stroke="#fff0b3" stroke-opacity=".7" stroke-width="2"/>
+  </svg></div>
+
+  <div class="fish pearl" id="pearlFish">
+  <svg viewBox="0 0 220 120" role="img" aria-label="Pearl blue fantasy fish">
+   <defs>
+    <linearGradient id="pearlBody" x1="0" y1="0" x2=".2" y2="1"><stop stop-color="#fff"/><stop offset=".32" stop-color="#b8efff"/><stop offset=".7" stop-color="#6aa9d5"/><stop offset="1" stop-color="#315d91"/></linearGradient>
+    <linearGradient id="pearlFin"><stop stop-color="#e9ffff" stop-opacity=".9"/><stop offset="1" stop-color="#8cbbec" stop-opacity=".2"/></linearGradient>
+    <pattern id="pearlScales" width="12" height="10" patternUnits="userSpaceOnUse"><path d="M0 5 Q6 12 12 5" fill="none" stroke="#fff" stroke-opacity=".65" stroke-width="1"/></pattern>
+   </defs>
+   <path class="tail" d="M55 60 Q20 20 5 18 Q16 57 4 99 Q31 93 55 60Z" fill="url(#pearlFin)" stroke="#d8f8ff" stroke-width="2"/>
+   <path class="fin" d="M91 28 Q110 -5 145 23 Q123 31 105 43Z" fill="url(#pearlFin)"/>
+   <path class="fin" d="M88 87 Q116 121 150 88 Q119 88 103 72Z" fill="url(#pearlFin)"/>
+   <path d="M49 59 Q71 15 133 31 Q178 39 185 61 Q169 91 122 92 Q70 96 49 59Z" fill="url(#pearlBody)" stroke="#e6fbff" stroke-width="2"/>
+   <path d="M49 59 Q71 15 133 31 Q178 39 185 61 Q169 91 122 92 Q70 96 49 59Z" fill="url(#pearlScales)"/>
+   <path d="M110 45 Q145 35 165 59 Q143 80 111 70Z" fill="#fff" opacity=".24"/>
+   <circle cx="166" cy="52" r="5.5" fill="#142536"/><circle cx="168" cy="50" r="1.8" fill="#fff"/>
+   <path d="M181 67 Q190 71 195 66" fill="none" stroke="#315d91" stroke-width="2" stroke-linecap="round"/>
+   <path d="M78 55 Q69 68 79 79" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2"/>
+  </svg></div>
+  <div class="glass-glow"></div>
 </section>
 
-<section class="tank" aria-label="Fantasy aquarium">
-
- <div class="waterline"></div>
-
- <div class="ray r1"></div>
- <div class="ray r2"></div>
- <div class="ray r3"></div>
-
- <div class="label m">GOLDEN BOY</div>
- <div class="label f">PEARL GIRL</div>
-
- <div class="fish male">
-  <span class="fin"></span>
-  <span class="eye"></span>
- </div>
-
- <div class="fish female">
-  <span class="fin"></span>
-  <span class="eye"></span>
- </div>
-
- <div class="bubble b1"></div>
- <div class="bubble b2"></div>
- <div class="bubble b3"></div>
- <div class="bubble b4"></div>
- <div class="bubble b5"></div>
-
- <div class="plant p1"></div>
- <div class="plant p2"></div>
- <div class="plant p3"></div>
- <div class="plant p4"></div>
-
- <div class="rock rk1"></div>
- <div class="rock rk2"></div>
- <div class="rock rk3"></div>
-
- <div class="sand"></div>
-</section>
-
-<div class="tank-caption">
- ✧ Two little hearts swimming in your ocean ✧
-</div>
-
-<section class="balance">
- <div>
-  <small>YOUR FOOD BALANCE</small>
-  <strong id="balance">0</strong>
- </div>
- <div>🐠 <span style="color:#b9d9ed;font-size:12px">
- Food portions</span></div>
-</section>
-
-<section>
- <h2 class="section-title">Give them a little love ✨</h2>
-
- <p class="hint">
- Choose a food package. Payment will be checked by the
- LUCKY OCEAN team before food is added.
- </p>
-
+<section class="section">
+ <h2>🐠 Feed your little friends</h2>
+ <p class="sub">Choose a food package and send a top-up request. Your food balance is updated only after an administrator verifies the payment.</p>
  <div class="packages">
-  <button class="package active"
-   data-amount="1000" onclick="selectPackage(this)">
-   <b>1,000 MMK</b><small>Small package</small>
-  </button>
-
-  <button class="package"
-   data-amount="3000" onclick="selectPackage(this)">
-   <b>3,000 MMK</b><small>Medium package</small>
-  </button>
-
-  <button class="package"
-   data-amount="5000" onclick="selectPackage(this)">
-   <b>5,000 MMK</b><small>Special package</small>
-  </button>
+  <button class="pkg active" data-food="1" data-price="1000"><strong>1,000 MMK</strong><span>1 FOOD</span></button>
+  <button class="pkg" data-food="3" data-price="3000"><strong>3,000 MMK</strong><span>3 FOODS</span></button>
+  <button class="pkg" data-food="5" data-price="5000"><strong>5,000 MMK</strong><span>5 FOODS</span></button>
  </div>
-
- <button class="primary" onclick="paymentInfo()">
- CONTINUE TO PAYMENT
- </button>
-
- <button class="primary feed" onclick="feedFish()">
- 🐠 FEED THE FISH
- </button>
+ <button class="primary" id="feedButton">🐟 FEED THE FISH</button>
+ <p class="note">Payment verification is manual in this demo. No money is collected by this page. Connect a secure order-verification backend before accepting real transfers.</p>
+ <div class="wish" id="wish"></div>
 </section>
-
-<div class="wish" id="wish">
- <strong>✦ A little wish for you ✦</strong>
- May your heart be peaceful,<br>
- your days be bright, and happiness find you.
+<footer>LUCKY OCEAN · HAPPINESS SWIMS HERE 💙</footer>
 </div>
-
-<footer>
- LUCKY OCEAN · HAPPINESS IN EVERY LITTLE MOMENT
-</footer>
-
-</main>
-
 <script>
-const tg = window.Telegram?.WebApp;
-tg?.ready();
-tg?.expand();
-
-let selectedAmount = 1000;
-let foodBalance = 0;
-
-function selectPackage(button){
- document.querySelectorAll(".package")
-  .forEach(b=>b.classList.remove("active"));
-
- button.classList.add("active");
- selectedAmount = Number(button.dataset.amount);
-}
-
-function paymentInfo(){
- alert(
-  "Selected package: " +
-  selectedAmount.toLocaleString() +
-  " MMK\n\n" +
-  "KBZPay payment details will be provided here after " +
-  "the secure payment setup is completed.\n\n" +
-  "Please do not transfer money to an unverified number."
- );
-}
-
-function feedFish(){
- if(foodBalance < 1){
-  alert("Your food balance is empty. Please purchase food first.");
+let foodBalance=0, selectedFood=1, feeding=false;
+const balanceEl=document.getElementById('balance');
+document.querySelectorAll('.pkg').forEach(btn=>btn.addEventListener('click',()=>{
+ document.querySelectorAll('.pkg').forEach(x=>x.classList.remove('active'));
+ btn.classList.add('active');selectedFood=Number(btn.dataset.food);
+}));
+document.getElementById('feedButton').addEventListener('click',()=>{
+ if(foodBalance<1){
+  document.getElementById('wish').style.display='block';
+  document.getElementById('wish').textContent='💙 Choose a food package to request a top-up. Food credits are added after admin verification.';
   return;
  }
-
- foodBalance--;
-
- document.getElementById("balance").textContent = foodBalance;
-
- document.getElementById("wish").innerHTML =
-  "<strong>✦ Your ocean wish ✦</strong>" +
-  "May good things find you today.<br>" +
-  "Stay happy, peaceful and full of hope. 💙";
-}
+ if(feeding)return;feeding=true;foodBalance--;balanceEl.textContent=foodBalance;
+ const gold=document.getElementById('goldFish'),pearl=document.getElementById('pearlFish');
+ gold.style.animation='swim 1.2s ease-in-out 3';pearl.style.animation='swim 1.4s ease-in-out 3';
+ const wish=document.getElementById('wish');wish.style.display='block';
+ wish.textContent='✨ May your day be filled with peace, happiness and gentle good fortune. 💙';
+ setTimeout(()=>{gold.style.animation='';pearl.style.animation='';feeding=false},3800);
+});
+for(let i=0;i<17;i++){const b=document.createElement('i');b.className='bubble';b.style.left=(4+Math.random()*92)+'%';b.style.animationDelay=(-Math.random()*10)+'s';b.style.animationDuration=(7+Math.random()*7)+'s';b.style.width=b.style.height=(3+Math.random()*6)+'px';document.querySelector('.tank').appendChild(b)}
 </script>
-
 </body>
 </html>
+'''
+path = Path("/mnt/data/lucky-ocean-aquarium-v2.html")
+path.write_text(html, encoding="utf-8")
+print(f"Created {path.name} ({len(html.splitlines())} lines, {path.stat().st_size:,} bytes)")
